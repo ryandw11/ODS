@@ -1,8 +1,11 @@
 package me.ryandw11.ods;
 
+import me.ryandw11.ods.serializer.Serializable;
 import me.ryandw11.ods.tags.*;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -14,36 +17,50 @@ public class ODS {
     /**
      * Wrap an object to a tag.
      * <p>The name is not set by this method.</p>
-     * <p>This method <b>cannot</b> wrap Lists, Maps, or Objects.</p>
+     * <p>This method <b>cannot</b> wrap Lists, Maps. Objects are automatically serialized.</p>
      * @param o The object to wrap.
      * @return The tag equivalent.
      */
     public static Tag<?> wrap(Object o){
+        return wrap("", o);
+    }
+
+    /**
+     * Wrap an object to a tag.
+     * <p>This method <b>cannot</b> wrap Lists, Maps. Objects are automatically serialized.</p>
+     * @param name The name of the tag to wrap.
+     * @param o The object to wrap.
+     * @return The tag equivalent.
+     */
+    public static Tag<?> wrap(String name, Object o){
         if(o instanceof Byte){
-            return new ByteTag("", (byte) o);
+            return new ByteTag(name, (byte) o);
         }
         if(o instanceof Character){
-            return new CharTag("", (char) o);
+            return new CharTag(name, (char) o);
         }
         if(o instanceof Double){
-            return new DoubleTag("", (double) o);
+            return new DoubleTag(name, (double) o);
         }
         if(o instanceof Float){
-            return new FloatTag("", (float) o);
+            return new FloatTag(name, (float) o);
         }
         if(o instanceof Integer){
-            return new IntTag("", (int) o);
+            return new IntTag(name, (int) o);
         }
         if(o instanceof Long){
-            return new LongTag("", (long) o);
+            return new LongTag(name, (long) o);
         }
         if(o instanceof Short){
-            return new ShortTag("", (short) o);
+            return new ShortTag(name, (short) o);
         }
         if(o instanceof String){
-            return new StringTag("", (String) o);
+            return new StringTag(name, (String) o);
         }
-        throw new RuntimeException("Cannot wrap object: Invalid object type.");
+        if(o instanceof List){
+            return wrap(name, (List<?>) o);
+        }
+        return serialize(name, o);
     }
 
     /**
@@ -54,6 +71,16 @@ public class ODS {
      * @return The unwrapped tag.
      */
     public static <T> T unwrap(Tag<T> tag){
+        if(tag instanceof ObjectTag){
+            try{
+                ObjectTag objTag = (ObjectTag) tag;
+                String clazzName = (String) objTag.getTag("ODS_TAG").getValue();
+                if(clazzName == null) throw new RuntimeException("Cannot unwrap object: TagObject is not a serialized object!");
+                return (T) deserialize(tag, Class.forName(clazzName));
+            }catch(ClassNotFoundException ex){
+                ex.printStackTrace();
+            }
+        }
         return tag.getValue();
     }
 
@@ -119,5 +146,61 @@ public class ODS {
             output.add(unwrap((Tag<T>) tag));
         }
         return output;
+    }
+
+    /**
+     * Serialize an object.
+     * @param key The key
+     * @param obj The object
+     * @return The object tag.
+     */
+    public static ObjectTag serialize(String key, Object obj){
+        ObjectTag objectTag = new ObjectTag(key);
+        try{
+            Class<?> clazz = obj.getClass();
+            objectTag.addTag(new StringTag("ODS_TAG", clazz.getName()));
+            for(Field f : clazz.getDeclaredFields()){
+                if(f.getAnnotation(Serializable.class) == null) continue;
+                f.setAccessible(true);
+                objectTag.addTag(wrap(f.getName(), f.get(obj)));
+                f.setAccessible(false);
+            }
+        } catch(IllegalAccessException ex){
+            ex.printStackTrace();
+        }
+        if(objectTag.getValue().size() < 2)
+            throw new RuntimeException("Cannot serialize object: No serializable fields detected!");
+        return objectTag;
+    }
+
+    /**
+     * Deserialize back into an object
+     * @param tag The tag.
+     * @param mainClazz The main class.
+     * @return The object.
+     */
+    public static <T> T deserialize(Tag<?> tag, Class<T> mainClazz){
+        if(!(tag instanceof ObjectTag)) throw new RuntimeException("Cannot deserialize tag: Tag is not an ObjectTag!");
+        ObjectTag objectTag = (ObjectTag) tag;
+        if(!objectTag.hasTag("ODS_TAG"))
+            throw new RuntimeException("Cannot deserialize tag: This tag was not serialized!");
+        Object obj;
+        try{
+             obj = mainClazz.getConstructor().newInstance();
+        }catch(Exception ex){
+            ex.printStackTrace();
+            return null;
+        }
+        for(Field f : mainClazz.getDeclaredFields()){
+            if(f.getAnnotation(Serializable.class) == null) continue;
+            try{
+                f.setAccessible(true);
+                f.set(obj, unwrap(objectTag.getTag(f.getName())));
+                f.setAccessible(false);
+            }catch(IllegalAccessException ex){
+                ex.printStackTrace();
+            }
+        }
+        return (T) obj;
     }
 }

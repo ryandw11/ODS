@@ -31,7 +31,15 @@ public class ObjectTag implements Tag<List<Tag<?>>> {
     }
 
     public Tag<?> getTag(String name){
-        return value.stream().filter(tag -> tag.getName().equals(name)).collect(Collectors.toList()).get(0);
+        List<Tag<?>> results = value.stream().filter(tag -> tag.getName().equals(name)).collect(Collectors.toList());
+        if(results.size() < 1)
+            throw new RuntimeException("No tag with that name was found!");
+
+        return results.get(0);
+    }
+
+    public boolean hasTag(String name){
+        return value.stream().filter(tag -> tag.getName().equals(name)).collect(Collectors.toList()).size() > 0;
     }
 
     @Override
