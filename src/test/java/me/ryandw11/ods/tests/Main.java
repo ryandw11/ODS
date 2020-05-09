@@ -10,7 +10,7 @@ import java.util.*;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        ObjectDataStructure ods = new ObjectDataStructure(new File("test.ods"));
+        ObjectDataStructure ods = new ObjectDataStructure(new File("test.ods"), Compression.NONE);
 
         long time = System.currentTimeMillis();
 
@@ -65,6 +65,7 @@ public class Main {
         System.out.println(unserCar.getType());
         System.out.println(unserCar.getOwner().getFirstName());
         System.out.println(System.currentTimeMillis() - time + "ms");
+
     }
 
     public static void testODS(){
@@ -85,7 +86,7 @@ public class Main {
             cars.add(c.serialize(i));
         }
         long time = System.currentTimeMillis();
-        ObjectDataStructure ods = new ObjectDataStructure(new File("test.ods"), true);
+        ObjectDataStructure ods = new ObjectDataStructure(new File("test.ods"), Compression.GZIP);
         ods.save(cars);
         System.out.println("Saved ODS in " + (System.currentTimeMillis() - time) + "ms");
         time = System.currentTimeMillis();

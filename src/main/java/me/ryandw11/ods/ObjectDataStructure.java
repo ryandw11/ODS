@@ -1,6 +1,5 @@
 package me.ryandw11.ods;
 
-import me.ryandw11.ods.tags.ObjectTag;
 import org.apache.commons.io.input.CountingInputStream;
 
 import java.io.*;
@@ -8,32 +7,49 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
+import java.util.zip.*;
 
 /**
  * The primary class of the ObjectDataStructure library.
  */
 public class ObjectDataStructure {
     private File file;
-    private boolean gzipped;
+    private Compression compression;
 
     /**
      * The file that is to be saved to
      * @param file The file.
      */
     public ObjectDataStructure(File file){
-        this(file, true);
+        this(file, Compression.GZIP);
     }
 
     /**
      * The file to be saved to
      * @param file The file.
-     * @param gzipped If the file is to be compressed.
+     * @param compression What compression the file should use.
      */
-    public ObjectDataStructure(File file, boolean gzipped){
+    public ObjectDataStructure(File file, Compression compression){
         this.file = file;
-        this.gzipped = gzipped;
+        this.compression = compression;
+    }
+
+    private OutputStream getOutputStream() throws IOException {
+        FileOutputStream fos = new FileOutputStream(file);
+        if(compression == Compression.GZIP)
+            return new GZIPOutputStream(fos);
+        if(compression == Compression.ZLIB)
+            return new DeflaterOutputStream(fos);
+        return fos;
+    }
+
+    private InputStream getInputStream() throws IOException {
+        FileInputStream fis = new FileInputStream(file);
+        if(compression == Compression.GZIP)
+            return new GZIPInputStream(fis);
+        if(compression == Compression.ZLIB)
+            return new InflaterInputStream(fis);
+        return fis;
     }
 
     /**
@@ -48,17 +64,10 @@ public class ObjectDataStructure {
     public <T extends Tag<?>> T get(String name){
         try{
             if(!file.exists()) return null;
-            FileInputStream fis = new FileInputStream(file);
-            if (gzipped){
-                GZIPInputStream gip = new GZIPInputStream(fis);
-                T out = (T) getSubData(gip.readAllBytes(), name);
-                gip.close();
-                return out;
-            }else{
-                T out = (T) getSubData(fis.readAllBytes(), name);
-                fis.close();
-                return out;
-            }
+            InputStream is = getInputStream();
+            T out = (T) getSubData(is.readAllBytes(), name);
+            is.close();
+            return out;
         }catch(IOException ex){
             ex.printStackTrace();
         }
@@ -78,17 +87,10 @@ public class ObjectDataStructure {
     public <T> T getObject(String key){
         try{
             if(!file.exists()) return null;
-            FileInputStream fis = new FileInputStream(file);
-            if (gzipped){
-                GZIPInputStream gip = new GZIPInputStream(fis);
-                T out = (T) getSubObjectData(gip.readAllBytes(), key);
-                gip.close();
-                return out;
-            } else {
-                T out = (T) getSubObjectData(fis.readAllBytes(), key);
-                fis.close();
-                return out;
-            }
+            InputStream is = getInputStream();
+            T out = (T) getSubObjectData(is.readAllBytes(), key);
+            is.close();
+            return out;
         }catch(IOException ex){
             ex.printStackTrace();
         }
@@ -103,18 +105,10 @@ public class ObjectDataStructure {
     public List<Tag<?>> getAll(){
         try{
             if(!file.exists()) return null;
-            if(gzipped){
-                FileInputStream fis = new FileInputStream(file);
-                GZIPInputStream gip = new GZIPInputStream(fis);
-                List<Tag<?>> output = getListData(gip.readAllBytes());
-                fis.close();
-                return output;
-            }else{
-                FileInputStream fis = new FileInputStream(file);
-                List<Tag<?>> output = getListData(fis.readAllBytes());
-                fis.close();
-                return output;
-            }
+            InputStream is = getInputStream();
+            List<Tag<?>> output = getListData(is.readAllBytes());
+            is.close();
+            return output;
         }catch(IOException ex){
             ex.printStackTrace();
         }
@@ -128,25 +122,13 @@ public class ObjectDataStructure {
      */
     public void save(List<? extends Tag<?>> tags){
         try{
-            if(!file.exists()) file.createNewFile();
-            if(gzipped){
-                FileOutputStream fos = new FileOutputStream(file);
-                GZIPOutputStream gop = new GZIPOutputStream(fos);
-                DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(gop));
-                for(Tag<?> tag : tags){
-                    tag.writeData(dos);
-                }
-                dos.close();
-                fos.close();
-            }else{
-                FileOutputStream fos = new FileOutputStream(file);
-                DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(fos));
-                for(Tag<?> tag : tags){
-                    tag.writeData(dos);
-                }
-                dos.close();
-                fos.close();
+            OutputStream os = getOutputStream();
+            DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(os));
+            for(Tag<?> tag : tags){
+                tag.writeData(dos);
             }
+            dos.close();
+            os.close();
         }catch(IOException ex){
             ex.printStackTrace();
         }
@@ -158,33 +140,17 @@ public class ObjectDataStructure {
      */
     public void append(Tag<?> tag){
         try{
-           if(gzipped){
-               if(!file.exists()) file.createNewFile();
-               FileOutputStream fos = new FileOutputStream(file);
-               GZIPOutputStream gop = new GZIPOutputStream(fos);
-               DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(gop));
+            if(!file.exists()) file.createNewFile();
+            OutputStream os = getOutputStream();
+            DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(os));
 
-               FileInputStream fis = new FileInputStream(file);
-               GZIPInputStream gip = new GZIPInputStream(fis);
-               dos.write(gip.readAllBytes());
-               gip.close();
-               tag.writeData(dos);
+            InputStream is = getInputStream();
+            dos.write(is.readAllBytes());
+            is.close();
+            tag.writeData(dos);
 
-               dos.close();
-               fos.close();
-           }else{
-               if(!file.exists()) file.createNewFile();
-               FileOutputStream fos = new FileOutputStream(file);
-               DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(fos));
-
-               FileInputStream fis = new FileInputStream(file);
-               dos.write(fis.readAllBytes());
-               fis.close();
-               tag.writeData(dos);
-
-               dos.close();
-               fos.close();
-           }
+            dos.close();
+            os.close();
         }catch(IOException ex){
             ex.printStackTrace();
         }
@@ -197,33 +163,17 @@ public class ObjectDataStructure {
     public void appendAll(List<Tag<?>> tags){
         try{
             if (!file.exists()) file.createNewFile();
-            if (gzipped){
-                FileOutputStream fos = new FileOutputStream(file);
-                GZIPOutputStream gop = new GZIPOutputStream(fos);
-                DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(gop));
+            OutputStream os = getOutputStream();
+            DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(os));
 
-                FileInputStream fis = new FileInputStream(file);
-                GZIPInputStream gip = new GZIPInputStream(fis);
-                dos.write(gip.readAllBytes());
-                gip.close();
-                for(Tag<?> tag : tags){
-                    tag.writeData(dos);
-                }
-                dos.close();
-                fos.close();
-            }else{
-                FileOutputStream fos = new FileOutputStream(file);
-                DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(fos));
-
-                FileInputStream fis = new FileInputStream(file);
-                dos.write(fis.readAllBytes());
-                fis.close();
-                for(Tag<?> tag : tags){
-                    tag.writeData(dos);
-                }
-                dos.close();
-                fos.close();
+            InputStream is = getInputStream();
+            dos.write(is.readAllBytes());
+            is.close();
+            for(Tag<?> tag : tags){
+                tag.writeData(dos);
             }
+            dos.close();
+            is.close();
         }catch(IOException ex){
             ex.printStackTrace();
         }
@@ -231,7 +181,6 @@ public class ObjectDataStructure {
 
     /**
      * Get a tag based upon the name.
-     * TODO remove byte[] from params
      * @param data The list of data.
      * @param name The name
      * @return The tag

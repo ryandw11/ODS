@@ -19,6 +19,8 @@ public class Car {
     @Serializable
     private Owner owner;
 
+    public Car(){}
+
     public Car init(String type, int gas, List<String> cords, Owner owner){
         this.type = type;
         this.gas = gas;
