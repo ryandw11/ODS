@@ -1,8 +1,11 @@
 package me.ryandw11.ods;
 
 import org.apache.commons.io.input.CountingInputStream;
+import org.apache.commons.lang3.tuple.MutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.*;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -141,6 +144,7 @@ public class ObjectDataStructure {
     public void append(Tag<?> tag){
         try{
             if(!file.exists()) file.createNewFile();
+            RandomAccessFile raf = new RandomAccessFile(file, "rw");
             OutputStream os = getOutputStream();
             DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(os));
 
@@ -180,6 +184,70 @@ public class ObjectDataStructure {
     }
 
     /**
+     * Find if a key exists within the file.
+     * @param key They key to find
+     * @return If the key exists.
+     */
+    public boolean find(String key){
+        try{
+            InputStream is = getInputStream();
+            return findSubObjectData(is.readAllBytes(), key);
+        }catch(IOException ex){
+            return false;
+        }
+    }
+
+    /**
+     * Remove a tag from the list.
+     * @param key The key to remove.
+     * @return The index of where the data was deleted.
+     *          <p>This will return -1 if an error occurs. -1 will call if: The file does not exist,
+     *          the requested key cannot be found, or the file cannot be read/edited.</p>
+     */
+    public int delete(String key){
+        try{
+            InputStream is = getInputStream();
+            byte[] data = is.readAllBytes();
+            is.close();
+            ByteBuffer buff = ByteBuffer.allocate(data.length);
+            Pair<Integer, byte[]> deleteReturn = deleteSubObjectData(data, key, buff);
+            OutputStream out = getOutputStream();
+            out.write(deleteReturn.getRight());
+            out.close();
+            return deleteReturn.getLeft();
+        }catch(IOException ex){
+            return -1;
+        }
+    }
+
+    /**
+     * Replace data with other data.
+     * <p><b>Only works when there is no compression.</b></p>
+     * @param key The key
+     * @param replacement The data to replace
+     * @return If the replacement was successful.
+     */
+    public boolean replaceData(String key, Tag<?> replacement){
+        try{
+            int index = delete(key);
+            if(index == -1) return false;
+
+            RandomAccessFile raf = new RandomAccessFile(file, "rw");
+            ByteArrayOutputStream bao = new ByteArrayOutputStream();
+            DataOutputStream dao = new DataOutputStream(bao);
+            raf.seek(index);
+            replacement.writeData(dao);
+            raf.write(bao.toByteArray());
+            dao.close();
+            bao.close();
+            raf.close();
+            return true;
+        }catch(IOException ex){
+            return false;
+        }
+    }
+
+    /**
      * Get a tag based upon the name.
      * @param data The list of data.
      * @param name The name
@@ -193,7 +261,6 @@ public class ObjectDataStructure {
         DataInputStream dis = new DataInputStream(cis);
 
         TagBuilder currentBuilder = new TagBuilder();
-        int dataLength = data.length;
         while(dis.available() > 0){
             currentBuilder.setDataType(dis.readByte());
             currentBuilder.setDataSize(dis.readInt());
@@ -201,7 +268,7 @@ public class ObjectDataStructure {
             currentBuilder.setNameSize(((Short) dis.readShort()).intValue());
             // If the name size isn't the same, then don't waste time reading the name.
             if(currentBuilder.getNameSize() != name.getBytes(StandardCharsets.UTF_8).length){
-                dis.skipNBytes((currentBuilder.getStartingIndex() - cis.getByteCount()) + currentBuilder.getDataSize());
+                dis.skip((currentBuilder.getStartingIndex() - cis.getByteCount()) + currentBuilder.getDataSize());
                 currentBuilder = new TagBuilder();
                 continue;
             }
@@ -212,7 +279,7 @@ public class ObjectDataStructure {
             currentBuilder.setName(tagName);
             // If the name is not correct, skip forward!
             if(!name.equals(tagName)){
-                dis.skipNBytes((currentBuilder.getStartingIndex() - cis.getByteCount()) + currentBuilder.getDataSize());
+                dis.skip((currentBuilder.getStartingIndex() - cis.getByteCount()) + currentBuilder.getDataSize());
                 currentBuilder = new TagBuilder();
                 continue;
             }
@@ -229,7 +296,6 @@ public class ObjectDataStructure {
 
     /**
      * Get a tag based upon the name.
-     * TODO remove byte[] from params
      * @param data The list of data.
      * @param key The key
      * @return The tag
@@ -251,7 +317,7 @@ public class ObjectDataStructure {
             currentBuilder.setNameSize(((Short) dis.readShort()).intValue());
             // If the name size isn't the same, then don't waste time reading the name.
             if(currentBuilder.getNameSize() != name.getBytes(StandardCharsets.UTF_8).length){
-                dis.skipNBytes((currentBuilder.getStartingIndex() - cis.getByteCount()) + currentBuilder.getDataSize());
+                dis.skip((currentBuilder.getStartingIndex() - cis.getByteCount()) + currentBuilder.getDataSize());
                 currentBuilder = new TagBuilder();
                 continue;
             }
@@ -262,7 +328,7 @@ public class ObjectDataStructure {
             currentBuilder.setName(tagName);
             // If the name is not correct, skip forward!
             if(!name.equals(tagName)){
-                dis.skipNBytes((currentBuilder.getStartingIndex() - cis.getByteCount()) + currentBuilder.getDataSize());
+                dis.skip((currentBuilder.getStartingIndex() - cis.getByteCount()) + currentBuilder.getDataSize());
                 currentBuilder = new TagBuilder();
                 continue;
             }
@@ -277,6 +343,110 @@ public class ObjectDataStructure {
         }
         dis.close();
         return null;
+    }
+
+    private boolean findSubObjectData(byte[] data, String key) throws IOException {
+        InputStream stream = new ByteArrayInputStream(data);
+        BufferedInputStream bis = new BufferedInputStream(stream);
+        final CountingInputStream cis = new CountingInputStream(bis);
+        DataInputStream dis = new DataInputStream(cis);
+        String name = key.split("\\.")[0];
+        String otherKey = getKey(key.split("\\."));
+
+        TagBuilder currentBuilder = new TagBuilder();
+        while(dis.available() > 0){
+            currentBuilder.setDataType(dis.readByte());
+            currentBuilder.setDataSize(dis.readInt());
+            currentBuilder.setStartingIndex(cis.getByteCount());
+            currentBuilder.setNameSize(((Short) dis.readShort()).intValue());
+            // If the name size isn't the same, then don't waste time reading the name.
+            if(currentBuilder.getNameSize() != name.getBytes(StandardCharsets.UTF_8).length){
+                dis.skip((currentBuilder.getStartingIndex() - cis.getByteCount()) + currentBuilder.getDataSize());
+                currentBuilder = new TagBuilder();
+                continue;
+            }
+            byte[] nameBytes = new byte[currentBuilder.getNameSize()];
+            dis.readFully(nameBytes);
+            String tagName = new String(nameBytes, StandardCharsets.UTF_8);
+            currentBuilder.setName(tagName);
+            // If the name is not correct, skip forward!
+            if(!name.equals(tagName)){
+                dis.skip((currentBuilder.getStartingIndex() - cis.getByteCount()) + currentBuilder.getDataSize());
+                currentBuilder = new TagBuilder();
+                continue;
+            }
+
+            byte[] value = new byte[((int) currentBuilder.getStartingIndex() - cis.getCount()) + currentBuilder.getDataSize()];
+            dis.readFully(value);
+            currentBuilder.setValueBytes(value);
+            dis.close();
+            if(otherKey != null)
+                return findSubObjectData(currentBuilder.getValueBytes(), otherKey);
+            return true;
+        }
+        dis.close();
+        return false;
+    }
+
+    private Pair<Integer, byte[]> deleteSubObjectData(byte[] data, String key, ByteBuffer newFile) throws IOException {
+        InputStream stream = new ByteArrayInputStream(data);
+        BufferedInputStream bis = new BufferedInputStream(stream);
+        final CountingInputStream cis = new CountingInputStream(bis);
+        DataInputStream dis = new DataInputStream(cis);
+        String name = key.split("\\.")[0];
+        String otherKey = getKey(key.split("\\."));
+
+        TagBuilder currentBuilder = new TagBuilder();
+        while(dis.available() > 0){
+            boolean found = true;
+            int start = cis.getCount();
+
+            currentBuilder.setDataType(dis.readByte());
+            currentBuilder.setDataSize(dis.readInt());
+            currentBuilder.setStartingIndex(cis.getByteCount());
+            currentBuilder.setNameSize(((Short) dis.readShort()).intValue());
+            // If the name size isn't the same, then don't waste time reading the name.
+            if(currentBuilder.getNameSize() != name.getBytes(StandardCharsets.UTF_8).length){
+                found = false;
+            }
+            byte[] nameBytes = new byte[currentBuilder.getNameSize()];
+            dis.readFully(nameBytes);
+            String tagName = new String(nameBytes, StandardCharsets.UTF_8);
+            currentBuilder.setName(tagName);
+            // If the name is not correct, skip forward!
+            if(!name.equals(tagName)){
+                found = false;
+            }
+
+            byte[] value = new byte[((int) currentBuilder.getStartingIndex() - cis.getCount()) + currentBuilder.getDataSize()];
+            dis.readFully(value);
+            currentBuilder.setValueBytes(value);
+            if(!found) {
+                addData(newFile, currentBuilder);
+                continue;
+            }
+            dis.close();
+            if(otherKey != null)
+                return deleteSubObjectData(currentBuilder.getValueBytes(), otherKey, newFile);
+            MutablePair<Integer, byte[]> finalData = new MutablePair<>();
+            newFile.flip();
+            byte[] newFileArray = new byte[newFile.limit()];
+            newFile.get(newFileArray);
+            newFile.clear();
+            finalData.setLeft(start);
+            finalData.setRight(newFileArray);
+            return finalData;
+        }
+        dis.close();
+        return MutablePair.of(-1, new byte[0]);
+    }
+
+    private void addData(ByteBuffer buf, TagBuilder builder){
+        buf.put((byte) builder.getDataType());
+        buf.putInt(builder.getDataSize());
+        buf.putShort((short) builder.getNameSize());
+        buf.put(builder.getName().getBytes(StandardCharsets.UTF_8));
+        buf.put(builder.getValueBytes());
     }
 
     private String getKey(String[] s){
