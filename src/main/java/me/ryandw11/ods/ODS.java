@@ -125,7 +125,7 @@ public class ODS {
      *           <p>The list must be a uniform data type.</p>
      * @return The unwrapped list.
      */
-    public static <T> List<T> unwrap(List<Tag<T>> tags){
+    public static <T> List<T> unwrapList(List<Tag<T>> tags){
         List<T> output = new ArrayList<>();
         for(Tag<T> tag : tags){
             output.add(unwrap(tag));
@@ -140,7 +140,7 @@ public class ODS {
      * @param <T> The data type of the list.
      * @return The unwrapped list.
      */
-    public static <T> List<T> unwrapList(ListTag<? extends Tag<T>> list){
+    public static <T> List<T> unwrapListTag(ListTag<? extends Tag<T>> list){
         List<T> output = new ArrayList<>();
         for(Tag<?> tag : list.getValue()){
             output.add(unwrap((Tag<T>) tag));
