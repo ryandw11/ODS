@@ -54,7 +54,7 @@ public class Main {
         System.out.println("The value of ExampleKey is: " + tag.getValue());
 
         ObjectTag myCar = ods.get("Car");
-        System.out.println("The car is a " + myCar.getTag("type").getValue());
+        System.out.println("The car is a " + myCar.<StringTag>getTag("type").getValue());
 
         StringTag ownerFirstName = ods.getObject("Car.Owner.firstName");
         StringTag ownerLastName = ods.getObject("Car.Owner.lastName");
@@ -66,6 +66,8 @@ public class Main {
         System.out.println(unserCar.getOwner().getFirstName());
         System.out.println(System.currentTimeMillis() - time + "ms");
         System.out.println(ods.find("SerCar"));
+
+        ods.append(new StringTag("Test", "test"));
 
         c.init("Test", 20, cords, own);
 

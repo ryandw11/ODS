@@ -144,13 +144,14 @@ public class ObjectDataStructure {
     public void append(Tag<?> tag){
         try{
             if(!file.exists()) file.createNewFile();
-            RandomAccessFile raf = new RandomAccessFile(file, "rw");
+            InputStream is = getInputStream();
+            byte[] data = is.readAllBytes();
+            is.close();
+
             OutputStream os = getOutputStream();
             DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(os));
 
-            InputStream is = getInputStream();
-            dos.write(is.readAllBytes());
-            is.close();
+            dos.write(data);
             tag.writeData(dos);
 
             dos.close();
@@ -167,17 +168,18 @@ public class ObjectDataStructure {
     public void appendAll(List<Tag<?>> tags){
         try{
             if (!file.exists()) file.createNewFile();
+            InputStream is = getInputStream();
+            byte[] data = is.readAllBytes();
+            is.close();
+
             OutputStream os = getOutputStream();
             DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(os));
 
-            InputStream is = getInputStream();
-            dos.write(is.readAllBytes());
-            is.close();
+            dos.write(data);
             for(Tag<?> tag : tags){
                 tag.writeData(dos);
             }
             dos.close();
-            is.close();
         }catch(IOException ex){
             ex.printStackTrace();
         }
