@@ -48,6 +48,8 @@ public class ObjectDataStructure {
 
     private InputStream getInputStream() throws IOException {
         FileInputStream fis = new FileInputStream(file);
+        if(fis.readAllBytes().length < 1)
+            return fis;
         if(compression == Compression.GZIP)
             return new GZIPInputStream(fis);
         if(compression == Compression.ZLIB)
