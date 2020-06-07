@@ -15,6 +15,7 @@ import java.util.zip.InflaterInputStream;
 /**
  * The primary class of the ObjectDataStructure library.
  * <p>This class uses Java NIO instead of IO.</p>
+ * @deprecated Still in development.
  */
 public class ObjectDataStructureNIO {
     private File file;

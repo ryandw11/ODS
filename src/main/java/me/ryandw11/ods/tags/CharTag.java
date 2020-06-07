@@ -9,6 +9,9 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * The char tag.
+ */
 public class CharTag implements Tag<Character> {
     private String name;
     private Character value;

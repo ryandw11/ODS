@@ -6,6 +6,9 @@ import org.apache.commons.io.output.CountingOutputStream;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * The string tag.
+ */
 public class StringTag implements Tag<String> {
     private String value;
     private String name;

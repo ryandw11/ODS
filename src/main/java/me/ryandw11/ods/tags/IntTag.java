@@ -7,6 +7,9 @@ import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * The int tag.
+ */
 public class IntTag implements Tag<Integer> {
     private int value;
     private String name;

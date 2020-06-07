@@ -9,6 +9,9 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * The byte tag.
+ */
 public class ByteTag implements Tag<Byte> {
     private String name;
     private Byte value;

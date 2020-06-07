@@ -9,6 +9,9 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * The long tag.
+ */
 public class LongTag implements Tag<Long> {
     private String name;
     private Long value;

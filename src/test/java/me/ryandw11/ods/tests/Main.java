@@ -10,7 +10,7 @@ import java.util.*;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        ObjectDataStructure ods = new ObjectDataStructure(new File("test.ods"), Compression.GZIP);
+        ObjectDataStructure ods = new ObjectDataStructure(new File("test.ods"), Compression.NONE);
 
         long time = System.currentTimeMillis();
 
@@ -45,7 +45,7 @@ public class Main {
 
         tags.add(ODS.serialize("SerCar", c));
 
-        ods.appendAll(tags);
+        ods.save(tags);
 
         // ===================================
         // Loading Objects

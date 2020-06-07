@@ -9,6 +9,9 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * The double tag.
+ */
 public class DoubleTag implements Tag<Double> {
     private String name;
     private Double value;

@@ -9,8 +9,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-
+/**
+ * The map tag.
+ * @param <T> The tag to have in a map.
+ */
 public class MapTag<T extends Tag<?>> implements Tag<Map<String, T>> {
     private String name;
     private Map<String, T> value;

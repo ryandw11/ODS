@@ -12,6 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * The object tag.
+ */
 public class ObjectTag implements Tag<List<Tag<?>>> {
     private String name;
     private List<Tag<?>> value;
@@ -26,10 +29,19 @@ public class ObjectTag implements Tag<List<Tag<?>>> {
         this.value = new ArrayList<>();
     }
 
+    /**
+     * Add a tag to the object.
+     * @param t The tag to add.
+     */
     public void addTag(Tag<?> t){
         value.add(t);
     }
 
+    /**
+     * Get a tag from the object.
+     * @param name The name of the tag.
+     * @return The tag. (RuntimeException if no tags were found).
+     */
     public Tag<?> getTag(String name){
         List<Tag<?>> results = value.stream().filter(tag -> tag.getName().equals(name)).collect(Collectors.toList());
         if(results.size() < 1)
@@ -38,6 +50,11 @@ public class ObjectTag implements Tag<List<Tag<?>>> {
         return results.get(0);
     }
 
+    /**
+     * If the object has a specified tag.
+     * @param name The tag's name.
+     * @return The tag.
+     */
     public boolean hasTag(String name){
         return value.stream().filter(tag -> tag.getName().equals(name)).collect(Collectors.toList()).size() > 0;
     }

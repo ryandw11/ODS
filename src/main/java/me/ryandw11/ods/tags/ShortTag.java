@@ -9,6 +9,9 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * The short tag.
+ */
 public class ShortTag implements Tag<Short> {
     private String name;
     private Short value;

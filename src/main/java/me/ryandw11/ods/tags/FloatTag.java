@@ -9,6 +9,9 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * The float tag
+ */
 public class FloatTag implements Tag<Float> {
     private String name;
     private Float value;
