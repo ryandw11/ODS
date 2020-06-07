@@ -1,5 +1,6 @@
 package me.ryandw11.ods;
 
+import me.ryandw11.ods.exception.ODSException;
 import org.apache.commons.io.input.CountingInputStream;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -14,6 +15,7 @@ import java.util.zip.*;
 
 /**
  * The primary class of the ObjectDataStructure library.
+ * <p>{@link me.ryandw11.ods.exception.ODSException} is thrown when an IOException is encountered.</p>
  */
 public class ObjectDataStructure {
     private File file;
@@ -57,7 +59,6 @@ public class ObjectDataStructure {
 
     /**
      * Grab a tag based upon the name.
-     * TODO Look into ZLIB compression instead of gzip.
      * <p>This will not work with object notation see {@link #getObject(String)} for that method.</p>
      * <p>Ensure you are storing this result with the correct data type.</p>
      * @param name The name of the tag.
@@ -72,9 +73,8 @@ public class ObjectDataStructure {
             is.close();
             return out;
         }catch(IOException ex){
-            ex.printStackTrace();
+            throw new ODSException("Error when receiving information from a file.", ex);
         }
-        return null;
     }
 
     /**
@@ -95,9 +95,8 @@ public class ObjectDataStructure {
             is.close();
             return out;
         }catch(IOException ex){
-            ex.printStackTrace();
+            throw new ODSException("Error when receiving information from a file.", ex);
         }
-        return null;
     }
 
     /**
@@ -113,9 +112,8 @@ public class ObjectDataStructure {
             is.close();
             return output;
         }catch(IOException ex){
-            ex.printStackTrace();
+            throw new ODSException("Error when receiving information from a file.", ex);
         }
-        return null;
     }
 
     /**
@@ -134,7 +132,7 @@ public class ObjectDataStructure {
             os.close();
             finish(os);
         }catch(IOException ex){
-            ex.printStackTrace();
+            throw new ODSException("Error when saving information to the file", ex);
         }
     }
 
@@ -162,7 +160,7 @@ public class ObjectDataStructure {
             os.close();
             finish(os);
         }catch(IOException ex){
-            ex.printStackTrace();
+            throw new ODSException("Error when saving information to the file", ex);
         }
     }
 
@@ -190,12 +188,13 @@ public class ObjectDataStructure {
             dos.close();
             finish(os);
         }catch(IOException ex){
-            ex.printStackTrace();
+            throw new ODSException("Error when saving information to the file", ex);
         }
     }
 
     /**
      * Find if a key exists within the file.
+     * <p>This will not throw ODSException if an IOException occurs.</p>
      * @param key They key to find
      * @return If the key exists.
      */
@@ -213,7 +212,7 @@ public class ObjectDataStructure {
      * @param key The key to remove.
      * @return The index of where the data was deleted.
      *          <p>This will return -1 if an error occurs. -1 will call if: The file does not exist,
-     *          the requested key cannot be found, or the file cannot be read/edited.</p>
+     *          the requested key cannot be found, or the file cannot be read/edited. (ODSException is not thrown)</p>
      */
     public int delete(String key){
         try{
@@ -236,7 +235,7 @@ public class ObjectDataStructure {
      * <p><b>Only works when there is no compression.</b></p>
      * @param key The key
      * @param replacement The data to replace
-     * @return If the replacement was successful.
+     * @return If the replacement was successful. ODSException is not thrown.
      */
     public boolean replaceData(String key, Tag<?> replacement){
         try{
@@ -512,7 +511,7 @@ public class ObjectDataStructure {
                 ((InflaterOutputStream) stream).finish();
             }
         }catch(IOException ex){
-            ex.printStackTrace();
+            throw new ODSException("An error has occured while attempting to close the output stream of the file.", ex);
         }
     }
 }
