@@ -48,8 +48,6 @@ public class ObjectDataStructure {
 
     private InputStream getInputStream() throws IOException {
         FileInputStream fis = new FileInputStream(file);
-        if(fis.readAllBytes().length < 1)
-            return fis;
         if(compression == Compression.GZIP)
             return new GZIPInputStream(fis);
         if(compression == Compression.ZLIB)
@@ -145,11 +143,14 @@ public class ObjectDataStructure {
      */
     public void append(Tag<?> tag){
         try{
-            if(!file.exists()) file.createNewFile();
-            InputStream is = getInputStream();
-            byte[] data = is.readAllBytes();
-            is.close();
-
+            byte[] data = new byte[0];
+            if(!file.exists()){
+                file.createNewFile();
+            }else{
+                InputStream is = getInputStream();
+                data = is.readAllBytes();
+                is.close();
+            }
             OutputStream os = getOutputStream();
             DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(os));
 
@@ -169,10 +170,13 @@ public class ObjectDataStructure {
      */
     public void appendAll(List<Tag<?>> tags){
         try{
+            byte[] data = new byte[0];
             if (!file.exists()) file.createNewFile();
-            InputStream is = getInputStream();
-            byte[] data = is.readAllBytes();
-            is.close();
+            else{
+                InputStream is = getInputStream();
+                data = is.readAllBytes();
+                is.close();
+            }
 
             OutputStream os = getOutputStream();
             DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(os));

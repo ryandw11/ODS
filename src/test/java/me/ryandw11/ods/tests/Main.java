@@ -45,7 +45,7 @@ public class Main {
 
         tags.add(ODS.serialize("SerCar", c));
 
-        ods.save(tags);
+        ods.appendAll(tags);
 
         // ===================================
         // Loading Objects
@@ -69,7 +69,7 @@ public class Main {
 
         ods.append(new StringTag("Test", "test"));
 
-        c.init("Test", 20, cords, own);
+//        c.init("Test", 20, cords, own);
 
     }
 
