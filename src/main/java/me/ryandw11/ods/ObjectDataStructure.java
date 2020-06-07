@@ -132,6 +132,7 @@ public class ObjectDataStructure {
             }
             dos.close();
             os.close();
+            finish(os);
         }catch(IOException ex){
             ex.printStackTrace();
         }
@@ -159,6 +160,7 @@ public class ObjectDataStructure {
 
             dos.close();
             os.close();
+            finish(os);
         }catch(IOException ex){
             ex.printStackTrace();
         }
@@ -186,6 +188,7 @@ public class ObjectDataStructure {
                 tag.writeData(dos);
             }
             dos.close();
+            finish(os);
         }catch(IOException ex){
             ex.printStackTrace();
         }
@@ -498,5 +501,18 @@ public class ObjectDataStructure {
         }
         dis.close();
         return output;
+    }
+
+    private void finish(OutputStream stream) {
+        try{
+            if(stream instanceof GZIPOutputStream){
+                ((GZIPOutputStream) stream).finish();
+            }
+            if(stream instanceof InflaterOutputStream){
+                ((InflaterOutputStream) stream).finish();
+            }
+        }catch(IOException ex){
+            ex.printStackTrace();
+        }
     }
 }
