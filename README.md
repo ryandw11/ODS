@@ -53,7 +53,7 @@ This tool allows you inspect ods files.
 [Click here to go to the visualizer repository.](https://github.com/ryandw11/ODS_Visualizer)
 # Offical Language Ports
  - C++ (Coming Soon)
- - C# (Coming Soon)
+ - [ODSSharp (C#)](https://github.com/ryandw11/ODSSharp)
  
 # Porting to another language.
 To port this to another language you just need to follow the file format specifications. The specifications for the ODS file type can be found below. Test ODS files can be found below. The Visualizer tool might be helpful.
