@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
  * The list tag.
  * <p>This tag holds a list of a single type of tag. Example:</p>
  * <code>
- *     ListTag<StringTag> listTag = new ListTag<>("MyTag", new ArrayList());
+ *     ListTag<StringTag> listTag = new ListTag<>("MyTag", new ArrayList()); <br>
  *     listTag.addTag(new StringTag("", "My String"));
  * </code>
  * <p>The name of all tags in the list are set to "" to conserve space.</p>

@@ -1,12 +1,11 @@
 package me.ryandw11.ods;
 
 import me.ryandw11.ods.exception.ODSException;
+import me.ryandw11.ods.util.KeyScout;
+import me.ryandw11.ods.util.KeyScoutChild;
 import org.apache.commons.io.input.CountingInputStream;
-import org.apache.commons.lang3.tuple.MutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.*;
-import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,6 +14,18 @@ import java.util.zip.*;
 
 /**
  * The primary class of the ObjectDataStructure library.
+ * <p>Most methods in ODS use what is called a key to reference objects within the file. A key allows you to grab specific
+ * information within the file. For example: If you wanted a specific string inside of an object with lots of information,
+ * you can get that specific string without any other data. If you have an object named Car and you wanted to get a string tag named
+ * owner from the inside the object, then the key for that would be:</p>
+ * <code>
+ *     Car.owner
+ * </code>
+ * <p>Let's say that the owner is an object called 'Owner' and you want to get the age of the owner, you could do:</p>
+ * <code>
+ *     Car.Owner.age
+ * </code>
+ * <p>You can obtain any tag using the key system, including ObjectTags. So the key `Car.Owner` would be valid.</p>
  * <p>{@link me.ryandw11.ods.exception.ODSException} is thrown when an IOException is encountered.</p>
  */
 public class ObjectDataStructure {
@@ -39,6 +50,10 @@ public class ObjectDataStructure {
         this.compression = compression;
     }
 
+    /**
+     * Grab the output stream that is used based upon the compression format.
+     * @return The output stream that should be used.
+     */
     private OutputStream getOutputStream() throws IOException {
         FileOutputStream fos = new FileOutputStream(file);
         if(compression == Compression.GZIP)
@@ -48,6 +63,10 @@ public class ObjectDataStructure {
         return fos;
     }
 
+    /**
+     * Grab the input stream that is used based upon the compression format.
+     * @return The input stream that should be used.
+     */
     private InputStream getInputStream() throws IOException {
         FileInputStream fis = new FileInputStream(file);
         if(compression == Compression.GZIP)
@@ -81,7 +100,7 @@ public class ObjectDataStructure {
      * Grab a tag based upon an object key.
      * <p>This method allows you to directly get sub-objects with little overhead.</p>
      * <code>
-     *     getObject("primary.firstsub.secondsub");
+     *     getObject("Object1.Object2.valuetag");
      * </code>
      * @param key The key to use.
      * @return The object Tag.
@@ -144,7 +163,8 @@ public class ObjectDataStructure {
         try{
             byte[] data = new byte[0];
             if(!file.exists()){
-                file.createNewFile();
+                if(!file.createNewFile())
+                    throw new ODSException("Unable to create file when appending tag.");
             }else{
                 InputStream is = getInputStream();
                 data = is.readAllBytes();
@@ -171,7 +191,10 @@ public class ObjectDataStructure {
     public void appendAll(List<Tag<?>> tags){
         try{
             byte[] data = new byte[0];
-            if (!file.exists()) file.createNewFile();
+            if (!file.exists()){
+                if(!file.createNewFile())
+                    throw new ODSException("Unable to create file when appending all tags.");
+            }
             else{
                 InputStream is = getInputStream();
                 data = is.readAllBytes();
@@ -210,47 +233,54 @@ public class ObjectDataStructure {
     /**
      * Remove a tag from the list.
      * @param key The key to remove.
-     * @return The index of where the data was deleted.
-     *          <p>This will return -1 if an error occurs. -1 will call if: The file does not exist,
-     *          the requested key cannot be found, or the file cannot be read/edited. (ODSException is not thrown)</p>
+     * @return If the deletion was successfully done.
      */
-    public int delete(String key){
+    public boolean delete(String key){
         try{
             InputStream is = getInputStream();
             byte[] data = is.readAllBytes();
             is.close();
-            ByteBuffer buff = ByteBuffer.allocate(data.length);
-            Pair<Integer, byte[]> deleteReturn = deleteSubObjectData(data, key, buff);
+            KeyScout counter = scoutObjectData(data, key, 0, new KeyScout());
+            if(counter == null){
+                return false;
+            }
+            byte[] deleteReturn = deleteSubObjectData(data, counter);
             OutputStream out = getOutputStream();
-            out.write(deleteReturn.getRight());
+            out.write(deleteReturn);
             out.close();
-            return deleteReturn.getLeft();
+            return true;
         }catch(IOException ex){
-            return -1;
+            return false;
         }
     }
 
     /**
-     * Replace data with other data.
-     * <p><b>Only works when there is no compression.</b></p>
+     * Replace a key with another tag.
      * @param key The key
      * @param replacement The data to replace
      * @return If the replacement was successful. ODSException is not thrown.
      */
     public boolean replaceData(String key, Tag<?> replacement){
         try{
-            int index = delete(key);
-            if(index == -1) return false;
+            InputStream is = getInputStream();
+            byte[] data = is.readAllBytes();
+            is.close();
 
-            RandomAccessFile raf = new RandomAccessFile(file, "rw");
-            ByteArrayOutputStream bao = new ByteArrayOutputStream();
-            DataOutputStream dao = new DataOutputStream(bao);
-            raf.seek(index);
-            replacement.writeData(dao);
-            raf.write(bao.toByteArray());
-            dao.close();
-            bao.close();
-            raf.close();
+            KeyScout counter = scoutObjectData(data, key, 0, new KeyScout());
+            if(counter == null){
+                return false;
+            }
+
+            ByteArrayOutputStream byteArrayOut = new ByteArrayOutputStream();
+            DataOutputStream dos = new DataOutputStream(byteArrayOut);
+            replacement.writeData(dos);
+
+            byte[] replaceReturn = replaceSubObjectData(data, counter,byteArrayOut.toByteArray());
+            OutputStream out = getOutputStream();
+            out.write(replaceReturn);
+            out.close();
+            dos.close();
+            byteArrayOut.close();
             return true;
         }catch(IOException ex){
             return false;
@@ -259,6 +289,7 @@ public class ObjectDataStructure {
 
     /**
      * Get a tag based upon the name.
+     * This is used byte the {@link #get(String)} method.
      * @param data The list of data.
      * @param name The name
      * @return The tag
@@ -271,6 +302,7 @@ public class ObjectDataStructure {
         DataInputStream dis = new DataInputStream(cis);
 
         TagBuilder currentBuilder = new TagBuilder();
+        // Loop until the file is done being read.
         while(dis.available() > 0){
             currentBuilder.setDataType(dis.readByte());
             currentBuilder.setDataSize(dis.readInt());
@@ -282,7 +314,6 @@ public class ObjectDataStructure {
                 currentBuilder = new TagBuilder();
                 continue;
             }
-            //TODO make sure the long math does not screw up this system.
             byte[] nameBytes = new byte[currentBuilder.getNameSize()];
             dis.readFully(nameBytes);
             String tagName = new String(nameBytes, StandardCharsets.UTF_8);
@@ -306,6 +337,7 @@ public class ObjectDataStructure {
 
     /**
      * Get a tag based upon the name.
+     * This method is used by the {@link #getObject(String)}, this is a recursive method.
      * @param data The list of data.
      * @param key The key
      * @return The tag
@@ -331,7 +363,7 @@ public class ObjectDataStructure {
                 currentBuilder = new TagBuilder();
                 continue;
             }
-            //TODO make sure the long math does not screw up this system.
+
             byte[] nameBytes = new byte[currentBuilder.getNameSize()];
             dis.readFully(nameBytes);
             String tagName = new String(nameBytes, StandardCharsets.UTF_8);
@@ -355,6 +387,14 @@ public class ObjectDataStructure {
         return null;
     }
 
+    /**
+     * Check to see if a key exists within a file.
+     * This method is used by the {@link #find(String)} method.
+     * @param data The array of bytes.
+     * @param key The key to find
+     * @return If the key could be found.
+     * @throws IOException If the end of the file is reached
+     */
     private boolean findSubObjectData(byte[] data, String key) throws IOException {
         InputStream stream = new ByteArrayInputStream(data);
         BufferedInputStream bis = new BufferedInputStream(stream);
@@ -398,7 +438,98 @@ public class ObjectDataStructure {
         return false;
     }
 
-    private Pair<Integer, byte[]> deleteSubObjectData(byte[] data, String key, ByteBuffer newFile) throws IOException {
+    /**
+     * Get the next key from the current key.
+     * So for example: An input of ['Object1', 'Object2', 'value']
+     * would output "Object2.value"
+     * @param s The current key in array form.
+     * @return The next key in string form.
+     */
+    private String getKey(String[] s){
+        List<String> list = new ArrayList<>(Arrays.asList(s));
+        list.remove(0);
+        if(list.size() == 1) return list.get(0);
+        if(list.size() < 1) return null;
+
+        return String.join(".", list);
+    }
+
+    /**
+     * Delete a key from the file.
+     * @param data The input from the data.
+     * @param counter The scout information.
+     * @return The output array of bytes.
+     */
+    private byte[] deleteSubObjectData(byte[] data, KeyScout counter){
+        counter.removeAmount(counter.getEnd().getSize() + 5);
+
+        KeyScoutChild end = counter.getEnd();
+
+        byte[] array1 = new byte[data.length - (5 + end.getSize())];
+        //Copy all of the information before the removed data.
+        System.arraycopy(data, 0, array1, 0, (end.getStartingIndex() - 1));
+        // copy all of the information after the removed data.
+        System.arraycopy(data, end.getStartingIndex() + 4 + end.getSize(),
+                array1, end.getStartingIndex()-1,
+                data.length - (end.getStartingIndex() + 4 + end.getSize()));
+
+        for(KeyScoutChild child : counter.getChildren()){
+            int index = child.getStartingIndex();
+            int size = child.getSize();
+            array1[index] = (byte)(size >> 24);
+            array1[index + 1] = (byte)(size >> 16);
+            array1[index + 2] = (byte)(size >> 8);
+            array1[index + 3] = (byte)(size);
+        }
+
+        return array1;
+    }
+
+    /**
+     * Replace a tag with another tag.
+     * @param data The input array of bytes
+     * @param counter The scout object
+     * @param dataToReplace The bytes of the replacement data.
+     * @return The output bytes.
+     */
+    private byte[] replaceSubObjectData(byte[] data, KeyScout counter, byte[] dataToReplace){
+        counter.removeAmount(counter.getEnd().getSize() + 5);
+        counter.addAmount(dataToReplace.length);
+
+        KeyScoutChild end = counter.getEnd();
+
+        byte[] array1 = new byte[data.length - (5 + end.getSize()) + dataToReplace.length];
+        //Copy all of the information before the removed data.
+        System.arraycopy(data, 0, array1, 0, (end.getStartingIndex() - 1));
+        System.arraycopy(dataToReplace, 0, array1, end.getStartingIndex()-1, dataToReplace.length);
+        // copy all of the information after the removed data.
+        System.arraycopy(data, end.getStartingIndex() + 4 + end.getSize(),
+                array1, end.getStartingIndex()-1 + dataToReplace.length,
+                data.length - (end.getStartingIndex() + 4 + end.getSize()));
+
+        for(KeyScoutChild child : counter.getChildren()){
+            int index = child.getStartingIndex();
+            int size = child.getSize();
+            array1[index] = (byte)(size >> 24);
+            array1[index + 1] = (byte)(size >> 16);
+            array1[index + 2] = (byte)(size >> 8);
+            array1[index + 3] = (byte)(size);
+        }
+
+        return array1;
+    }
+
+    /**
+     * This object goes through the data and scouts out the information from the given key.
+     * This method is recursive, which is why the parameter offset exists.
+     * @param data The input array of bytes
+     * @param key The key
+     * @param offset The byte counter offset. (How many bytes were read previously).
+     * @param counter The Scout object.
+     * @return The key scout.
+     * @throws IOException If the file of an invalid type.
+     */
+    private KeyScout scoutObjectData(byte[] data, String key, int offset, KeyScout counter) throws IOException {
         InputStream stream = new ByteArrayInputStream(data);
         BufferedInputStream bis = new BufferedInputStream(stream);
         final CountingInputStream cis = new CountingInputStream(bis);
@@ -408,16 +539,18 @@ public class ObjectDataStructure {
 
         TagBuilder currentBuilder = new TagBuilder();
         while(dis.available() > 0){
-            boolean found = true;
-            int start = cis.getCount();
-
+            KeyScoutChild child = new KeyScoutChild();
             currentBuilder.setDataType(dis.readByte());
+            // Set the starting index of the byte count.
+            child.setStartingIndex(offset + (int)cis.getByteCount());
             currentBuilder.setDataSize(dis.readInt());
             currentBuilder.setStartingIndex(cis.getByteCount());
             currentBuilder.setNameSize(((Short) dis.readShort()).intValue());
             // If the name size isn't the same, then don't waste time reading the name.
             if(currentBuilder.getNameSize() != name.getBytes(StandardCharsets.UTF_8).length){
-                found = false;
+                dis.skip((currentBuilder.getStartingIndex() - cis.getByteCount()) + currentBuilder.getDataSize());
+                currentBuilder = new TagBuilder();
+                continue;
             }
             byte[] nameBytes = new byte[currentBuilder.getNameSize()];
             dis.readFully(nameBytes);
@@ -425,47 +558,31 @@ public class ObjectDataStructure {
             currentBuilder.setName(tagName);
             // If the name is not correct, skip forward!
             if(!name.equals(tagName)){
-                found = false;
+                dis.skip((currentBuilder.getStartingIndex() - cis.getByteCount()) + currentBuilder.getDataSize());
+                currentBuilder = new TagBuilder();
+                continue;
             }
+
+            // This is done so that way the counter does not count the value bytes.
+            int count = (int) cis.getByteCount();
 
             byte[] value = new byte[((int) currentBuilder.getStartingIndex() - cis.getCount()) + currentBuilder.getDataSize()];
             dis.readFully(value);
             currentBuilder.setValueBytes(value);
-            if(!found) {
-                addData(newFile, currentBuilder);
-                continue;
-            }
             dis.close();
-            if(otherKey != null)
-                return deleteSubObjectData(currentBuilder.getValueBytes(), otherKey, newFile);
-            MutablePair<Integer, byte[]> finalData = new MutablePair<>();
-            newFile.flip();
-            byte[] newFileArray = new byte[newFile.limit()];
-            newFile.get(newFileArray);
-            newFile.clear();
-            finalData.setLeft(start);
-            finalData.setRight(newFileArray);
-            return finalData;
+            if(otherKey != null) {
+                child.setSize(currentBuilder.getDataSize());
+                child.setName(currentBuilder.getName());
+                counter.addChild(child);
+                return scoutObjectData(currentBuilder.getValueBytes(), otherKey, offset + count, counter);
+            }
+            child.setName(currentBuilder.getName());
+            child.setSize(currentBuilder.getDataSize());
+            counter.setEnd(child);
+            return counter;
         }
         dis.close();
-        return MutablePair.of(-1, new byte[0]);
-    }
-
-    private void addData(ByteBuffer buf, TagBuilder builder){
-        buf.put((byte) builder.getDataType());
-        buf.putInt(builder.getDataSize());
-        buf.putShort((short) builder.getNameSize());
-        buf.put(builder.getName().getBytes(StandardCharsets.UTF_8));
-        buf.put(builder.getValueBytes());
-    }
-
-    private String getKey(String[] s){
-        List<String> list = new ArrayList<>(Arrays.asList(s));
-        list.remove(0);
-        if(list.size() == 1) return list.get(0);
-        if(list.size() < 1) return null;
-
-        return String.join(".", list);
+        return null;
     }
 
     /**
@@ -488,7 +605,7 @@ public class ObjectDataStructure {
             currentBuilder.setDataSize(dis.readInt());
             currentBuilder.setStartingIndex(cis.getByteCount());
             currentBuilder.setNameSize(dis.readShort());
-            //TODO make sure the long math does not screw up this system.
+
             byte[] nameBytes = new byte[currentBuilder.getNameSize()];
             dis.readFully(nameBytes);
             String tagName = new String(nameBytes, StandardCharsets.UTF_8);

@@ -12,9 +12,13 @@ public class ODSException extends RuntimeException {
         this.ex = ex;
     }
 
+    public ODSException(String s){
+        super(s);
+    }
+
     /**
      * Get the IOException that occurred.
-     * @return The IOException.
+     * @return The IOException. Null if no IOException happened.
      */
     public IOException getIOException(){
         return ex;
