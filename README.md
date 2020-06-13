@@ -6,28 +6,28 @@ ODS is not human readable, data is stored in bytes.
   
 Maven: 
 ```xml
-	<repositories>
-		<repository>
-		    <id>jitpack.io</id>
-		    <url>https://jitpack.io</url>
-		</repository>
-	</repositories>
+<repositories>
+    <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+    </repository>
+</repositories>
 
-	<dependency>
-	    <groupId>com.github.ryandw11</groupId>
-	    <artifactId>ODS</artifactId>
-	    <version>3d15abcbfe</version>
-	</dependency>
+<dependency>
+    <groupId>com.github.ryandw11</groupId>
+    <artifactId>ODS</artifactId>
+    <version>3d15abcbfe</version>
+</dependency>
 ```
 Gradle:  
 ```gradle
-    repositories {
-			maven { url 'https://jitpack.io' }
-		}
+repositories {
+    maven { url 'https://jitpack.io' }
+}
     
-    dependencies {
-	        implementation 'com.github.ryandw11:ODS:3d15abcbfe'
-	  }
+dependencies {
+    implementation 'com.github.ryandw11:ODS:3d15abcbfe'
+}
 ```
 # Usage
 As stated above ODS uses tags. There are many primative tags: StringTag, IntTag, ShortTag, LongTag, ByteTag, DoubleTag, FloatTag.  
