@@ -4,6 +4,7 @@ ODS is not human readable, data is stored in bytes.
   
 [JavaDocs](https://ryandw11.github.io/ODS/)  
   
+![Maven Package](https://github.com/ryandw11/ODS/workflows/Maven%20Package/badge.svg)  
 Maven: 
 ```xml
 <repositories>
