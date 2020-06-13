@@ -2,8 +2,33 @@
 Object Data Structure is a file format inspired by NBT. Everything in this file format is made of tags.  
 ODS is not human readable, data is stored in bytes.  
   
-[JavaDocs](https://ryandw11.github.io/ODS/)
+[JavaDocs](https://ryandw11.github.io/ODS/)  
+  
+Maven: 
+```xml
+	<repositories>
+		<repository>
+		    <id>jitpack.io</id>
+		    <url>https://jitpack.io</url>
+		</repository>
+	</repositories>
 
+	<dependency>
+	    <groupId>com.github.ryandw11</groupId>
+	    <artifactId>ODS</artifactId>
+	    <version>3d15abcbfe</version>
+	</dependency>
+```
+Gradle:  
+```gradle
+    repositories {
+			maven { url 'https://jitpack.io' }
+		}
+    
+    dependencies {
+	        implementation 'com.github.ryandw11:ODS:3d15abcbfe'
+	  }
+```
 # Usage
 As stated above ODS uses tags. There are many primative tags: StringTag, IntTag, ShortTag, LongTag, ByteTag, DoubleTag, FloatTag.  
 There are also the ListTag and MapTag. They both store primative tags in a list and map format respectivly.  
