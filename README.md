@@ -17,7 +17,7 @@ Maven:
 
 <dependency>
     <groupId>com.ryandw11</groupId>
-    <artifactId>ODS</artifactId>
+    <artifactId>ods</artifactId>
     <version>1.0-SNAPSHOT</version>
 </dependency>
 ```
@@ -28,7 +28,7 @@ repositories {
 }
     
 dependencies {
-    implementation 'com.ryandw11:ODS:1.0-SNAPSHOT'
+    implementation 'com.ryandw11:ods:1.0-SNAPSHOT'
 }
 ```
 # Usage
