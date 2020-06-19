@@ -4,29 +4,31 @@ ODS is not human readable, data is stored in bytes.
   
 [JavaDocs](https://ryandw11.github.io/ODS/)  
   
+![Maven Package](https://github.com/ryandw11/ODS/workflows/Maven%20Package/badge.svg)  
+Currently Object Data Structure is in a snapshot phase. For now you can use the following repository to access it:
 Maven: 
 ```xml
 <repositories>
     <repository>
-        <id>jitpack.io</id>
-        <url>https://jitpack.io</url>
+        <id>ObjectDataStructure</id>
+        <url>https://repo.thevideogamevillage.com/repository/maven-snapshots/</url>
     </repository>
 </repositories>
 
 <dependency>
-    <groupId>com.github.ryandw11</groupId>
-    <artifactId>ODS</artifactId>
-    <version>3d15abcbfe</version>
+    <groupId>com.ryandw11</groupId>
+    <artifactId>ods</artifactId>
+    <version>1.0-SNAPSHOT</version>
 </dependency>
 ```
 Gradle:  
 ```gradle
 repositories {
-    maven { url 'https://jitpack.io' }
+    maven { url 'https://repo.thevideogamevillage.com/repository/maven-snapshots/' }
 }
     
 dependencies {
-    implementation 'com.github.ryandw11:ODS:3d15abcbfe'
+    implementation 'com.ryandw11:ods:1.0-SNAPSHOT'
 }
 ```
 # Usage

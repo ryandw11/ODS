@@ -81,6 +81,14 @@
             <version>2.8.6</version>
         </dependency>
     </dependencies>
+         
+    <distributionManagement>
+      <repository>
+        <id>github</id>
+        <name>GitHub Packages</name>
+        <url>https://maven.pkg.github.com/ryandw11/ODS</url>
+     </repository>
+   </distributionManagement>
 
     <distributionManagement>
         <repository>
