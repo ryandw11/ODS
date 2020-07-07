@@ -7,6 +7,7 @@ import org.apache.commons.io.output.CountingOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -101,14 +102,9 @@ public class ObjectTag implements Tag<List<Tag<?>>> {
     }
 
     @Override
-    public Tag<List<Tag<?>>> createFromData(byte[] value) {
+    public Tag<List<Tag<?>>> createFromData(ByteBuffer value, int length) {
         List<Tag<?>> data;
-        try{
-            data = ObjectDataStructure.getListData(value);
-        }catch(IOException ex){
-            ex.printStackTrace();
-            return null;
-        }
+        data = ObjectDataStructure.getListData(value, length);
         this.value = data;
         return this;
     }

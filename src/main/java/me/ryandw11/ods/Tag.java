@@ -2,6 +2,7 @@ package me.ryandw11.ods;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 
 /**
  * The main tag interface.
@@ -42,9 +43,10 @@ public interface Tag<T> {
     /**
      * Turn an array of bytes into the Tag.
      * @param value The array of bytes
+     * @param length The size of the value in bytes.
      * @return The instance of the tag.
      */
-    Tag<T> createFromData(byte[] value);
+    Tag<T> createFromData(ByteBuffer value, int length);
 
     /**
      * Get the ID of the tag.

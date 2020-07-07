@@ -60,10 +60,8 @@ public class CharTag implements Tag<Character> {
     }
 
     @Override
-    public Tag<Character> createFromData(byte[] value) {
-        ByteBuffer wrappedFloat = ByteBuffer.wrap(value);
-        this.value = wrappedFloat.getChar();
-        wrappedFloat.clear();
+    public Tag<Character> createFromData(ByteBuffer value, int length) {
+        this.value = value.getChar();
         return this;
     }
 

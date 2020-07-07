@@ -60,10 +60,8 @@ public class DoubleTag implements Tag<Double> {
     }
 
     @Override
-    public Tag<Double> createFromData(byte[] value) {
-        ByteBuffer wrappedFloat = ByteBuffer.wrap(value);
-        this.value = wrappedFloat.getDouble();
-        wrappedFloat.clear();
+    public Tag<Double> createFromData(ByteBuffer value, int length) {
+        this.value = value.getDouble();
         return this;
     }
 

@@ -60,10 +60,8 @@ public class FloatTag implements Tag<Float> {
     }
 
     @Override
-    public Tag<Float> createFromData(byte[] value) {
-        ByteBuffer wrappedFloat = ByteBuffer.wrap(value);
-        this.value = wrappedFloat.getFloat();
-        wrappedFloat.clear();
+    public Tag<Float> createFromData(ByteBuffer value, int length) {
+        this.value = value.getFloat();
         return this;
     }
 

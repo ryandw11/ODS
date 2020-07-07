@@ -60,10 +60,8 @@ public class LongTag implements Tag<Long> {
     }
 
     @Override
-    public Tag<Long> createFromData(byte[] value) {
-        ByteBuffer wrappedFloat = ByteBuffer.wrap(value);
-        this.value = wrappedFloat.getLong();
-        wrappedFloat.clear();
+    public Tag<Long> createFromData(ByteBuffer value, int length) {
+        this.value = value.getLong();
         return this;
     }
 
