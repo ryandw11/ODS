@@ -6,7 +6,7 @@
 
     <groupId>me.ryandw11</groupId>
     <artifactId>ods</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0-MEM-SNAPSHOT</version>
 
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>
@@ -81,14 +81,6 @@
             <version>2.8.6</version>
         </dependency>
     </dependencies>
-         
-    <distributionManagement>
-      <repository>
-        <id>github</id>
-        <name>GitHub Packages</name>
-        <url>https://maven.pkg.github.com/ryandw11/ODS</url>
-     </repository>
-   </distributionManagement>
 
     <distributionManagement>
         <repository>

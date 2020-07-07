@@ -109,6 +109,7 @@ public class ObjectDataStructure {
      *     get("Object1.Object2.valuetag");
      * </code>
      * @param key The key to use.
+     * @param <T> The tag type.
      * @return The object Tag.
      *      <p>This will return null if the requested sub-object does not exist, or if the file does not exist.</p>
      */
@@ -308,9 +309,9 @@ public class ObjectDataStructure {
 
     /**
      * This method can append, delete, and set tags.
-     * <p>A note on keys when appending: <br><code>ObjectOne.ObjectTwo.tagName</code> When appending data <b>tagName</b> will not be the actual tag name.
+     * <p>A note on keys when appending: <br><code>ObjectOne.ObjectTwo.tagName</code><br> When appending data <b>tagName</b> will not be the actual tag name.
      * The tag name written to the file is the name of the specified tag in the value parameter. Any parent objects that do not exist will be created. For example:
-     * <code>ObjectOne.ObjectTwo.NewObject.tagName</code> If in the example above <b>NewObject</b> does not exist, than the object will be created with the value tag inside
+     * <br><code>ObjectOne.ObjectTwo.NewObject.tagName</code><br> If in the example above <b>NewObject</b> does not exist, than the object will be created with the value tag inside
      * of it. Please see the wiki for a more detailed explanation on this.</p>
      * <p>When value is null, the specified key is deleted. <b>The key MUST exist or an {@link ODSException} will be thrown.</b></p>
      * @param key The key of the tag to append, delete, or set.
