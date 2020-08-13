@@ -60,10 +60,8 @@ public class ShortTag implements Tag<Short> {
     }
 
     @Override
-    public Tag<Short> createFromData(byte[] value) {
-        ByteBuffer wrappedFloat = ByteBuffer.wrap(value);
-        this.value = wrappedFloat.getShort();
-        wrappedFloat.clear();
+    public Tag<Short> createFromData(ByteBuffer value, int length) {
+        this.value = value.getShort();
         return this;
     }
 

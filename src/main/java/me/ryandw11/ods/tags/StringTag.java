@@ -4,6 +4,7 @@ import me.ryandw11.ods.Tag;
 import org.apache.commons.io.output.CountingOutputStream;
 
 import java.io.*;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -41,7 +42,7 @@ public class StringTag implements Tag<String> {
     @Override
     public void writeData(DataOutputStream dos) throws IOException {
         // Indicates the string
-        dos.write(1);
+        dos.write(getID());
         //Create a new DataOutputStream
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         CountingOutputStream cos = new CountingOutputStream(os);
@@ -59,8 +60,10 @@ public class StringTag implements Tag<String> {
     }
 
     @Override
-    public Tag<String> createFromData(byte[] value) {
-        this.value = new String(value, StandardCharsets.UTF_8);
+    public Tag<String> createFromData(ByteBuffer value, int length) {
+        byte[] stringData = new byte[length];
+        value.get(stringData);
+        this.value = new String(stringData, StandardCharsets.UTF_8);
         return this;
     }
 

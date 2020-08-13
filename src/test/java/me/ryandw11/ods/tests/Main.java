@@ -2,14 +2,12 @@ package me.ryandw11.ods.tests;
 
 import me.ryandw11.ods.*;
 import me.ryandw11.ods.tags.*;
-import me.ryandw11.ods.tests.json.JsonTests;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
 
 public class Main {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args){
         ObjectDataStructure ods = new ObjectDataStructure(new File("test.ods"), Compression.GZIP);
 
         long time = System.currentTimeMillis();
@@ -58,10 +56,10 @@ public class Main {
         System.out.println("The value of ExampleKey is: " + tag.getValue());
 
         ObjectTag myCar = ods.get("Car");
-        System.out.println("The car is a " + myCar.<StringTag>getTag("type").getValue());
+        System.out.println("The car is a " + myCar.getTag("type").getValue());
 
-        StringTag ownerFirstName = ods.getObject("Car.Owner.firstName");
-        StringTag ownerLastName = ods.getObject("Car.Owner.lastName");
+        StringTag ownerFirstName = ods.get("Car.Owner.firstName");
+        StringTag ownerLastName = ods.get("Car.Owner.lastName");
         System.out.println("The owner of the car is " + ODS.unwrap(ownerFirstName) + " " + ODS.unwrap(ownerLastName));
 
         Car unserCar = ODS.deserialize(ods.get("SerCar"), Car.class);
@@ -71,7 +69,12 @@ public class Main {
         System.out.println(System.currentTimeMillis() - time + "ms");
         System.out.println(ods.find("SerCar"));
 
+        ods.set("Car.Owner.MEGAOOF.MULTIPLEFILES.test", new StringTag("Test", "test"));
+        ods.set("Car.Owner.MEGAOOF.MULTIPLEFILES.test2", new StringTag("Test2", "Second Test"));
+
         ods.append(new StringTag("Test", "test"));
+//        StringTag tag = ods.getObject("Car.type");
+//        System.out.println(tag.getValue());
 
 //        c.init("Test", 20, cords, own);
 
@@ -99,7 +102,7 @@ public class Main {
         ods.save(cars);
         System.out.println("Saved ODS in " + (System.currentTimeMillis() - time) + "ms");
         time = System.currentTimeMillis();
-        ObjectTag ot = ods.getObject("car300.Owner");
+        ObjectTag ot = ods.get("car300.Owner");
         System.out.println("Loaded ODS in " + (System.currentTimeMillis() - time));
     }
 }

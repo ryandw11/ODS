@@ -5,6 +5,7 @@ import me.ryandw11.ods.Tag;
 import org.apache.commons.io.output.CountingOutputStream;
 
 import java.io.*;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,7 +14,7 @@ import java.util.stream.Collectors;
  * The list tag.
  * <p>This tag holds a list of a single type of tag. Example:</p>
  * <code>
- *     ListTag<StringTag> listTag = new ListTag<>("MyTag", new ArrayList()); <br>
+ *     ListTag&lt;StringTag&gt; listTag = new ListTag&lt;&gt;("MyTag", new ArrayList()); <br>
  *     listTag.addTag(new StringTag("", "My String"));
  * </code>
  * <p>The name of all tags in the list are set to "" to conserve space.</p>
@@ -121,14 +122,9 @@ public class ListTag<T extends Tag<?>> implements Tag<List<T>> {
     }
 
     @Override
-    public Tag<List<T>> createFromData(byte[] value) {
+    public Tag<List<T>> createFromData(ByteBuffer value, int length) {
         List<Tag<?>> data;
-        try{
-            data = ObjectDataStructure.getListData(value);
-        }catch(IOException ex){
-            ex.printStackTrace();
-            return null;
-        }
+        data = ObjectDataStructure.getListData(value, length);
         this.value = data.stream().map(d -> (T) d).collect(Collectors.toList());
         return this;
     }

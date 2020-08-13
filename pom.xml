@@ -57,7 +57,7 @@
                 </executions>
                 <configuration>
                     <serverId>nexus</serverId>
-                    <nexusUrl>https://repo.thevideogamevillage.com/nexus/</nexusUrl>
+                    <nexusUrl>https://repo.ryandw11.com/nexus/</nexusUrl>
                     <skipStaging>true</skipStaging>
                 </configuration>
             </plugin>
@@ -81,23 +81,15 @@
             <version>2.8.6</version>
         </dependency>
     </dependencies>
-         
-    <distributionManagement>
-      <repository>
-        <id>github</id>
-        <name>GitHub Packages</name>
-        <url>https://maven.pkg.github.com/ryandw11/ODS</url>
-     </repository>
-   </distributionManagement>
 
     <distributionManagement>
         <repository>
             <id>nexus-releases</id>
-            <url>https://repo.thevideogamevillage.com/repository/maven-public/</url>
+            <url>https://repo.ryandw11.com/repository/maven-public/</url>
         </repository>
         <snapshotRepository>
             <id>nexus-snapshots</id>
-            <url>https://repo.thevideogamevillage.com/repository/maven-snapshots/</url>
+            <url>https://repo.ryandw11.com/repository/maven-snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
 

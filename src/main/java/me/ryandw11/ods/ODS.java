@@ -175,6 +175,7 @@ public class ODS {
      * Deserialize back into an object
      * @param tag The tag.
      * @param mainClazz The main class.
+     * @param <T> The deserialized class.
      * @return The object.
      */
     public static <T> T deserialize(Tag<?> tag, Class<T> mainClazz){

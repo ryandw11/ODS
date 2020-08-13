@@ -58,10 +58,8 @@ public class IntTag implements Tag<Integer> {
     }
 
     @Override
-    public Tag<Integer> createFromData(byte[] value) {
-        ByteBuffer wrappedInt = ByteBuffer.wrap(value);
-        this.value = wrappedInt.getInt();
-        wrappedInt.clear();
+    public Tag<Integer> createFromData(ByteBuffer value, int length) {
+        this.value = value.getInt();
         return this;
     }
 

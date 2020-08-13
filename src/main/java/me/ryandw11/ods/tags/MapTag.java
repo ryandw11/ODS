@@ -5,6 +5,7 @@ import me.ryandw11.ods.Tag;
 import org.apache.commons.io.output.CountingOutputStream;
 
 import java.io.*;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
@@ -66,14 +67,9 @@ public class MapTag<T extends Tag<?>> implements Tag<Map<String, T>> {
     }
 
     @Override
-    public Tag<Map<String, T>> createFromData(byte[] value) {
+    public Tag<Map<String, T>> createFromData(ByteBuffer value, int length) {
         List<Tag<?>> data;
-        try{
-            data = ObjectDataStructure.getListData(value);
-        }catch(IOException ex){
-            ex.printStackTrace();
-            return null;
-        }
+        data = ObjectDataStructure.getListData(value, length);
         Map<String, T> output = new HashMap<>();
         for(Tag<?> tag : data){
             output.put(tag.getName(), (T) tag);

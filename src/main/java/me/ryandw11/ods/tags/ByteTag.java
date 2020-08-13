@@ -60,10 +60,8 @@ public class ByteTag implements Tag<Byte> {
     }
 
     @Override
-    public Tag<Byte> createFromData(byte[] value) {
-        ByteBuffer wrappedFloat = ByteBuffer.wrap(value);
-        this.value = wrappedFloat.get();
-        wrappedFloat.clear();
+    public Tag<Byte> createFromData(ByteBuffer value, int length) {
+        this.value = value.get();
         return this;
     }
 
