@@ -11,7 +11,7 @@ Maven:
 <repositories>
     <repository>
         <id>ObjectDataStructure</id>
-        <url>https://repo.thevideogamevillage.com/repository/maven-snapshots/</url>
+        <url>https://repo.ryandw11.com/repository/maven-snapshots/</url>
     </repository>
 </repositories>
 
@@ -24,7 +24,7 @@ Maven:
 Gradle:  
 ```gradle
 repositories {
-    maven { url 'https://repo.thevideogamevillage.com/repository/maven-snapshots/' }
+    maven { url 'https://repo.ryandw11.com/repository/maven-snapshots/' }
 }
     
 dependencies {
