@@ -9,6 +9,8 @@ import java.util.*;
 public class Main {
     public static void main(String[] args){
         ObjectDataStructure ods = new ObjectDataStructure(new File("test.ods"), Compression.GZIP);
+        // Register a custom tag.
+        ODS.registerCustomTag(new CustomTag("", ""));
 
         long time = System.currentTimeMillis();
 
@@ -28,6 +30,8 @@ public class Main {
         car.addTag(owner);
 
         tags.add(car);
+
+        tags.add(new CustomTag("Test", "This is a test!"));
 
         Random rand = new Random();
         Car c = new Car();
@@ -73,10 +77,9 @@ public class Main {
         ods.set("Car.Owner.MEGAOOF.MULTIPLEFILES.test2", new StringTag("Test2", "Second Test"));
 
         ods.append(new StringTag("Test", "test"));
-//        StringTag tag = ods.getObject("Car.type");
-//        System.out.println(tag.getValue());
 
-//        c.init("Test", 20, cords, own);
+        // Print out a custom tag.
+        System.out.println("Custom Tag: " + ((CustomTag) ods.get("Test")).getValue());
 
     }
 
