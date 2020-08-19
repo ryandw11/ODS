@@ -1,7 +1,10 @@
 package me.ryandw11.ods;
 
+import me.ryandw11.ods.exception.ODSException;
 import me.ryandw11.ods.tags.*;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.ParameterizedType;
 import java.nio.ByteBuffer;
 
 public class TagBuilder {
@@ -103,7 +106,25 @@ public class TagBuilder {
             case 11:
                 return new ObjectTag(this.name).createFromData(this.valueBytes, this.valueLength);
             default:
-                throw new RuntimeException("Error: That data type does not exist!");
+                for(Tag<?> tag : ODS.getCustomTags()){
+                    if(getDataType() != tag.getID()) continue;
+                    Class<?> tagClazz = tag.getClass();
+                    try{
+                        return ((Tag<?>) tagClazz.getConstructor(String.class,
+                                (Class<?>) ((ParameterizedType)tagClazz.getGenericInterfaces()[0])
+                                        .getActualTypeArguments()[0]).newInstance(this.name, null))
+                                .createFromData(this.valueBytes, this.valueLength);
+                    }catch(NoSuchMethodException ex){
+                        throw new ODSException("Invalid Custom Tag Constructor.");
+                    } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
+                        throw new ODSException("Unable to create an instance of a custom tag. IllegalAccessException, InstantiationException, " +
+                                "or InvocationTargetException.");
+                    }
+                }
+                if(!ODS.ignoreInvalidCustomTags)
+                    throw new RuntimeException("Error: That data type does not exist!");
+                else
+                    return new InvalidTag(this.name).createFromData(this.valueBytes, this.valueLength);
         }
     }
 
