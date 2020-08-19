@@ -2,35 +2,36 @@
 Object Data Structure is a file format inspired by NBT. Everything in this file format is made of tags.  
 ODS is not human readable, data is stored in bytes.  
   
-[JavaDocs](https://ryandw11.github.io/ODS/)  
+## [JavaDocs](https://ryandw11.github.io/ODS/)  
   
-![Maven Package](https://github.com/ryandw11/ODS/workflows/Maven%20Package/badge.svg)  
-Currently Object Data Structure is in a snapshot phase. For now you can use the following repository to access it:
+Access release builds of Object Data Structure by using the following methods:  
 Maven: 
 ```xml
 <repositories>
     <repository>
         <id>ObjectDataStructure</id>
-        <url>https://repo.ryandw11.com/repository/maven-snapshots/</url>
+        <url>https://repo.ryandw11.com/repository/maven-releases/</url>
     </repository>
 </repositories>
 
 <dependency>
     <groupId>com.ryandw11</groupId>
     <artifactId>ods</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0</version>
 </dependency>
 ```
 Gradle:  
 ```gradle
 repositories {
-    maven { url 'https://repo.ryandw11.com/repository/maven-snapshots/' }
+    maven { url 'https://repo.ryandw11.com/repository/maven-releases/' }
 }
     
 dependencies {
-    implementation 'com.ryandw11:ods:1.0-SNAPSHOT'
+    implementation 'com.ryandw11:ods:1.0.0'
 }
 ```
+Fat Jar:  
+[Download the latest fat jar here](https://github.com/ryandw11/ODS/releases)
 # Usage
 As stated above ODS uses tags. There are many primative tags: StringTag, IntTag, ShortTag, LongTag, ByteTag, DoubleTag, FloatTag.  
 There are also the ListTag and MapTag. They both store primative tags in a list and map format respectivly.  
@@ -64,14 +65,13 @@ The ODS class also allows the serialization of custom objects.
 
 ## Example for loading
 ```java
-        StringTag tag = ods.get("ExampleKey");
-        System.out.println("The value of ExampleKey is: " + tag.getValue());
+        System.out.println("The value of ExampleKey is: " + ods.<StringTag>get("ExampleKey").getValue());
 
         ObjectTag myCar = ods.get("Car");
         System.out.println("The car is a " + myCar.getTag("type").getValue());
 
-        StringTag ownerFirstName = ods.getObject("Car.Owner.firstName");
-        StringTag ownerLastName = ods.getObject("Car.Owner.lastName");
+        StringTag ownerFirstName = ods.get("Car.Owner.firstName");
+        StringTag ownerLastName = ods.get("Car.Owner.lastName");
         System.out.println("The owner of the car is " + ODS.unwrap(ownerFirstName) + " " + ODS.unwrap(ownerLastName));
 ```
 # ODS Visualizer
