@@ -7,6 +7,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.nio.ByteBuffer;
 
+/**
+ * Builds the tag.
+ * Internal Class.
+ */
 public class TagBuilder {
     private int dataType;
     private int dataSize;

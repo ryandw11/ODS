@@ -79,7 +79,7 @@ public class Main {
         ods.append(new StringTag("Test", "test"));
 
         // Print out a custom tag.
-        System.out.println("Custom Tag: " + ((CustomTag) ods.get("Test")).getValue());
+        System.out.println("Custom Tag: " + ods.<CustomTag>get("Test").getValue());
 
     }
 

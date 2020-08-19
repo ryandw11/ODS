@@ -7,20 +7,22 @@ import java.io.IOException;
  */
 public class ODSException extends RuntimeException {
     private IOException ex;
-    public ODSException(String s, IOException ex){
-        super (s);
+
+    public ODSException(String s, IOException ex) {
+        super(s);
         this.ex = ex;
     }
 
-    public ODSException(String s){
+    public ODSException(String s) {
         super(s);
     }
 
     /**
      * Get the IOException that occurred.
+     *
      * @return The IOException. Null if no IOException happened.
      */
-    public IOException getIOException(){
+    public IOException getIOException() {
         return ex;
     }
 }

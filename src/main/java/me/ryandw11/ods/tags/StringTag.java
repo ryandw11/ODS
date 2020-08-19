@@ -3,7 +3,9 @@ package me.ryandw11.ods.tags;
 import me.ryandw11.ods.Tag;
 import org.apache.commons.io.output.CountingOutputStream;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
@@ -14,14 +16,9 @@ public class StringTag implements Tag<String> {
     private String value;
     private String name;
 
-    public StringTag(String name, String value){
+    public StringTag(String name, String value) {
         this.name = name;
         this.value = value;
-    }
-
-    @Override
-    public void setValue(String s) {
-        this.value = s;
     }
 
     @Override
@@ -30,13 +27,18 @@ public class StringTag implements Tag<String> {
     }
 
     @Override
-    public void setName(String name) {
-        this.name = name;
+    public void setValue(String s) {
+        this.value = s;
     }
 
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override

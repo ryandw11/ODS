@@ -12,34 +12,37 @@ public class KeyScout {
     private List<KeyScoutChild> children;
     private KeyScoutChild end;
 
-    public KeyScout(){
+    public KeyScout() {
         this.children = new ArrayList<>();
     }
 
     /**
      * Add a child to the key scout.
+     *
      * @param child The child.
      */
-    public void addChild(KeyScoutChild child){
+    public void addChild(KeyScoutChild child) {
         this.children.add(child);
     }
 
     /**
      * Get the children (parent objects of the desired end tag).
+     *
      * @return The child objects.
      */
-    public List<KeyScoutChild> getChildren(){
+    public List<KeyScoutChild> getChildren() {
         return children;
     }
 
     /**
      * Get the tag parent by name.
+     *
      * @param name The name
      * @return The key scout child.
      */
-    public KeyScoutChild getChildByName(String name){
-        for(KeyScoutChild child : children){
-            if(child.getName().equals(name))
+    public KeyScoutChild getChildByName(String name) {
+        for (KeyScoutChild child : children) {
+            if (child.getName().equals(name))
                 return child;
         }
         return null;
@@ -47,36 +50,40 @@ public class KeyScout {
 
     /**
      * Get the information for the desired tag.
+     *
      * @return The information.
      */
-    public KeyScoutChild getEnd(){
+    public KeyScoutChild getEnd() {
         return end;
     }
 
     /**
      * Set the information for the ending tag.
+     *
      * @param end The end.
      */
-    public void setEnd(KeyScoutChild end){
+    public void setEnd(KeyScoutChild end) {
         this.end = end;
     }
 
     /**
      * Remove x size from the parent object headers.
+     *
      * @param size The size to remove.
      */
-    public void removeAmount(int size){
-        for(KeyScoutChild child : children){
+    public void removeAmount(int size) {
+        for (KeyScoutChild child : children) {
             child.removeSize(size);
         }
     }
 
     /**
      * Add x size to the parent object headers.
+     *
      * @param size The size to add.
      */
-    public void addAmount(int size){
-        for(KeyScoutChild child : children){
+    public void addAmount(int size) {
+        for (KeyScoutChild child : children) {
             child.addSize(size);
         }
     }

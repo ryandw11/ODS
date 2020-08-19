@@ -11,6 +11,7 @@ import java.util.List;
 /**
  * This is a utility class that provided wrappers for the different tags.
  * All wrappers exclude a name.
+ * <p>This class also contains overall settings for ODS.</p>
  */
 public class ODS {
 
