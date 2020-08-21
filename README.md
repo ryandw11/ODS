@@ -1,3 +1,4 @@
+![Maven Release](https://www.ryandw11.com/api/repo-badge/maven-releases/me.ryandw11/ods) ![Maven Snapshot](https://www.ryandw11.com/api/repo-badge-snapshot/maven-snapshots/me.ryandw11/ods)
 # Object Data Structure (ODS)
 Object Data Structure is a file format inspired by NBT. Everything in this file format is made of tags.  
 ODS is not human readable, data is stored in bytes.  
