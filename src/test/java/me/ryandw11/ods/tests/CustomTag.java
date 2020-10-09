@@ -1,7 +1,7 @@
 package me.ryandw11.ods.tests;
 
 import me.ryandw11.ods.Tag;
-import org.apache.commons.io.output.CountingOutputStream;
+import me.ryandw11.ods.io.CountingOutputStream;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -57,7 +57,7 @@ public class CustomTag implements Tag<String> {
         //Create a new DataOutputStream that way the size of the tag
         // can be counted.
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        // This output stream is apart of the Apache Commons Library
+        // Use ODS's custom output stream for counting the bytes.
         CountingOutputStream cos = new CountingOutputStream(os);
         DataOutputStream tempDos = new DataOutputStream(cos);
 

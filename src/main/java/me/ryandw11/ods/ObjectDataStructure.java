@@ -33,7 +33,7 @@ import java.util.zip.*;
  * <p>You can obtain any tag using the key system, including ObjectTags. So the key `Car.Owner` would be valid.</p>
  * <p>{@link ODSException} is thrown when an IOException is encountered or the file is not in the ODS format / is corrupted.</p>
  *
- * @version 1.0.0
+ * @version 1.0.1
  */
 public class ObjectDataStructure {
     private File file;

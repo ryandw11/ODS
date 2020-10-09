@@ -2,7 +2,7 @@ package me.ryandw11.ods.tags;
 
 import me.ryandw11.ods.ObjectDataStructure;
 import me.ryandw11.ods.Tag;
-import org.apache.commons.io.output.CountingOutputStream;
+import me.ryandw11.ods.io.CountingOutputStream;
 
 import java.io.*;
 import java.nio.ByteBuffer;
