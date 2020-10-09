@@ -18,7 +18,7 @@ Maven:
 <dependency>
     <groupId>me.ryandw11</groupId>
     <artifactId>ods</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
 </dependency>
 ```
 Gradle:  
@@ -28,7 +28,7 @@ repositories {
 }
     
 dependencies {
-    implementation 'me.ryandw11:ods:1.0.0'
+    implementation 'me.ryandw11:ods:1.0.1'
 }
 ```
 Fat Jar:  
