@@ -1,6 +1,7 @@
 package me.ryandw11.ods;
 
 import me.ryandw11.ods.exception.ODSException;
+import me.ryandw11.ods.io.ODSIOUtils;
 import me.ryandw11.ods.tags.ObjectTag;
 import me.ryandw11.ods.util.KeyScout;
 import me.ryandw11.ods.util.KeyScoutChild;
@@ -105,7 +106,7 @@ public class ObjectDataStructure {
             FileChannel channel = fis.getChannel();
             return channel.map(FileChannel.MapMode.READ_ONLY, 0, channel.size());
         } else
-            return ByteBuffer.wrap(stream.readAllBytes());
+            return ByteBuffer.wrap(ODSIOUtils.toByteArray(stream));
     }
 
     /**
@@ -190,7 +191,7 @@ public class ObjectDataStructure {
                     throw new ODSException("Unable to create file when appending tag.");
             } else {
                 InputStream is = getInputStream();
-                data = is.readAllBytes();
+                data = ODSIOUtils.toByteArray(is);
                 is.close();
             }
             OutputStream os = getOutputStream();
@@ -220,7 +221,7 @@ public class ObjectDataStructure {
                     throw new ODSException("Unable to create file when appending all tags.");
             } else {
                 InputStream is = getInputStream();
-                data = is.readAllBytes();
+                data = ODSIOUtils.toByteArray(is);
                 is.close();
             }
 
@@ -402,7 +403,7 @@ public class ObjectDataStructure {
                 byteArrayOut.close();
                 // Insert the data and read all of the existing bytes
                 InputStream stream = getInputStream();
-                byte[] output = setSubObjectData(stream.readAllBytes(), counter, data);
+                byte[] output = setSubObjectData(ODSIOUtils.toByteArray(stream), counter, data);
                 stream.close();
                 // Write the new bytes to the file.
                 OutputStream out = getOutputStream();
