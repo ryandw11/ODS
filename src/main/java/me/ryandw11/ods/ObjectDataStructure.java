@@ -1,5 +1,8 @@
 package me.ryandw11.ods;
 
+import me.ryandw11.ods.compression.Compressor;
+import me.ryandw11.ods.compression.GZIPCompression;
+import me.ryandw11.ods.compression.ZLIBCompression;
 import me.ryandw11.ods.exception.ODSException;
 import me.ryandw11.ods.io.ODSIOUtils;
 import me.ryandw11.ods.tags.ObjectTag;
@@ -34,19 +37,21 @@ import java.util.zip.*;
  * <p>You can obtain any tag using the key system, including ObjectTags. So the key `Car.Owner` would be valid.</p>
  * <p>{@link ODSException} is thrown when an IOException is encountered or the file is not in the ODS format / is corrupted.</p>
  *
- * @version 1.0.1
+ * @version 1.0.3
  */
 public class ObjectDataStructure {
     private File file;
-    private Compression compression;
+    private Compressor compression;
 
     /**
-     * The file that is to be saved to
+     * The file that is to be saved to.
+     *
+     * <p>This uses the GZIP compression format by default.</p>
      *
      * @param file The file.
      */
     public ObjectDataStructure(File file) {
-        this(file, Compression.GZIP);
+        this(file, new GZIPCompression());
     }
 
     /**
@@ -55,7 +60,7 @@ public class ObjectDataStructure {
      * @param file        The file.
      * @param compression What compression the file should use.
      */
-    public ObjectDataStructure(File file, Compression compression) {
+    public ObjectDataStructure(File file, Compressor compression) {
         this.file = file;
         this.compression = compression;
     }
@@ -67,11 +72,7 @@ public class ObjectDataStructure {
      */
     private OutputStream getOutputStream() throws IOException {
         FileOutputStream fos = new FileOutputStream(file);
-        if (compression == Compression.GZIP)
-            return new GZIPOutputStream(fos);
-        if (compression == Compression.ZLIB)
-            return new DeflaterOutputStream(fos);
-        return fos;
+        return compression.getOutputStream(fos);
     }
 
     /**
@@ -81,11 +82,7 @@ public class ObjectDataStructure {
      */
     private InputStream getInputStream() throws IOException {
         FileInputStream fis = new FileInputStream(file);
-        if (compression == Compression.GZIP)
-            return new GZIPInputStream(fis);
-        if (compression == Compression.ZLIB)
-            return new InflaterInputStream(fis);
-        return fis;
+        return compression.getInputStream(fis);
     }
 
     /**
@@ -172,7 +169,6 @@ public class ObjectDataStructure {
             }
             dos.close();
             os.close();
-            finish(os);
         } catch (IOException ex) {
             throw new ODSException("Error when saving information to the file", ex);
         }
