@@ -15,6 +15,8 @@ import java.util.List;
  */
 public class ODS {
 
+    private ODS() {}
+
     protected static boolean ignoreInvalidCustomTags = false;
     /**
      * This list stores all registered custom tags.

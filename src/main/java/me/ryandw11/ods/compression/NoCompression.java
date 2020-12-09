@@ -8,16 +8,16 @@ import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
 
 /**
- * Compress the file using the ZLIB compression format.
+ * This will not compress the file.
  */
-public class ZLIBCompression implements Compressor {
+public class NoCompression implements Compressor {
     @Override
     public InputStream getInputStream(FileInputStream file) {
-        return new InflaterInputStream(file);
+        return file;
     }
 
     @Override
     public OutputStream getOutputStream(FileOutputStream file) {
-        return new DeflaterOutputStream(file);
+        return file;
     }
 }

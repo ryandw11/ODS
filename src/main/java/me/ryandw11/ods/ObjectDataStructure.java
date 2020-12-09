@@ -44,7 +44,9 @@ public class ObjectDataStructure {
     private Compressor compression;
 
     /**
-     * The file that is to be saved to
+     * The file that is to be saved to.
+     *
+     * <p>This uses the GZIP compression format by default.</p>
      *
      * @param file The file.
      */
@@ -167,7 +169,6 @@ public class ObjectDataStructure {
             }
             dos.close();
             os.close();
-            finish(os);
         } catch (IOException ex) {
             throw new ODSException("Error when saving information to the file", ex);
         }

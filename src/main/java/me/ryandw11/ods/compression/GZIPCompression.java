@@ -1,11 +1,12 @@
 package me.ryandw11.ods.compression;
 
 import java.io.*;
-import java.util.zip.DeflaterOutputStream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
-import java.util.zip.InflaterInputStream;
 
+/**
+ * Compress the file using the GZIP compression format.
+ */
 public class GZIPCompression implements Compressor {
     @Override
     public InputStream getInputStream(FileInputStream file) throws IOException {
