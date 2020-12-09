@@ -1,6 +1,7 @@
 package me.ryandw11.ods.tests;
 
 import me.ryandw11.ods.*;
+import me.ryandw11.ods.compression.GZIPCompression;
 import me.ryandw11.ods.tags.*;
 
 import java.io.File;
@@ -8,7 +9,7 @@ import java.util.*;
 
 public class Main {
     public static void main(String[] args){
-        ObjectDataStructure ods = new ObjectDataStructure(new File("test.ods"), Compression.GZIP);
+        ObjectDataStructure ods = new ObjectDataStructure(new File("test.ods"), new GZIPCompression());
         // Register a custom tag.
         ODS.registerCustomTag(new CustomTag("", ""));
 
@@ -101,7 +102,7 @@ public class Main {
             cars.add(c.serialize(i));
         }
         long time = System.currentTimeMillis();
-        ObjectDataStructure ods = new ObjectDataStructure(new File("test.ods"), Compression.GZIP);
+        ObjectDataStructure ods = new ObjectDataStructure(new File("test.ods"), new GZIPCompression());
         ods.save(cars);
         System.out.println("Saved ODS in " + (System.currentTimeMillis() - time) + "ms");
         time = System.currentTimeMillis();
