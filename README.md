@@ -20,7 +20,7 @@ Maven:
 <dependency>
     <groupId>me.ryandw11</groupId>
     <artifactId>ods</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
 </dependency>
 ```
 Gradle:  
@@ -30,7 +30,7 @@ repositories {
 }
     
 dependencies {
-    implementation 'me.ryandw11:ods:1.0.2'
+    implementation 'me.ryandw11:ods:1.0.3'
 }
 ```
 Fat Jar:  
@@ -89,6 +89,10 @@ This tool allows you inspect ods files.
 To port this to another language you just need to follow the file format specifications. The specifications for the ODS file type can be found below. Test ODS files can be found below. The Visualizer tool might be helpful.
 ## Existing Ports
  - There are none! To add your port to this list open an issue or create a PR!
+ 
+# Addons
+## ODSCompressionPlus
+[ODSCompressionPlus](https://github.com/ryandw11/ODSCompressionPlus) provides additional compression formats, such as: Zstd.
 
 ## Specification
 Each tag has a header consisting of 7 bytes.
