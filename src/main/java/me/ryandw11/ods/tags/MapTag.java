@@ -1,10 +1,12 @@
 package me.ryandw11.ods.tags;
 
-import me.ryandw11.ods.ObjectDataStructure;
 import me.ryandw11.ods.Tag;
+import me.ryandw11.ods.internal.InternalUtils;
 import me.ryandw11.ods.io.CountingOutputStream;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -69,7 +71,7 @@ public class MapTag<T extends Tag<?>> implements Tag<Map<String, T>> {
     @Override
     public Tag<Map<String, T>> createFromData(ByteBuffer value, int length) {
         List<Tag<?>> data;
-        data = ObjectDataStructure.getListData(value, length);
+        data = InternalUtils.getListData(value, length);
         Map<String, T> output = new HashMap<>();
         for(Tag<?> tag : data){
             output.put(tag.getName(), (T) tag);

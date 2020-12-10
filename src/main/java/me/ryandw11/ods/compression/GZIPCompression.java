@@ -9,12 +9,12 @@ import java.util.zip.GZIPOutputStream;
  */
 public class GZIPCompression implements Compressor {
     @Override
-    public InputStream getInputStream(FileInputStream file) throws IOException {
+    public InputStream getInputStream(InputStream file) throws IOException {
         return new GZIPInputStream(file);
     }
 
     @Override
-    public OutputStream getOutputStream(FileOutputStream file) throws IOException {
+    public OutputStream getOutputStream(OutputStream file) throws IOException {
         return new GZIPOutputStream(file);
     }
 }

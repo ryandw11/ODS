@@ -1,7 +1,7 @@
 package me.ryandw11.ods.tags;
 
-import me.ryandw11.ods.ObjectDataStructure;
 import me.ryandw11.ods.Tag;
+import me.ryandw11.ods.internal.InternalUtils;
 import me.ryandw11.ods.io.CountingOutputStream;
 
 import java.io.ByteArrayOutputStream;
@@ -20,32 +20,34 @@ public class ObjectTag implements Tag<List<Tag<?>>> {
     private String name;
     private List<Tag<?>> value;
 
-    public ObjectTag(String name, List<Tag<?>> value){
+    public ObjectTag(String name, List<Tag<?>> value) {
         this.name = name;
         this.value = value;
     }
 
-    public ObjectTag(String name){
+    public ObjectTag(String name) {
         this.name = name;
         this.value = new ArrayList<>();
     }
 
     /**
      * Add a tag to the object.
+     *
      * @param t The tag to add.
      */
-    public void addTag(Tag<?> t){
+    public void addTag(Tag<?> t) {
         value.add(t);
     }
 
     /**
      * Get a tag from the object.
+     *
      * @param name The name of the tag.
      * @return The tag. (RuntimeException if no tags were found).
      */
-    public Tag<?> getTag(String name){
+    public Tag<?> getTag(String name) {
         List<Tag<?>> results = value.stream().filter(tag -> tag.getName().equals(name)).collect(Collectors.toList());
-        if(results.size() < 1)
+        if (results.size() < 1)
             throw new RuntimeException("No tag with that name was found!");
 
         return results.get(0);
@@ -53,10 +55,11 @@ public class ObjectTag implements Tag<List<Tag<?>>> {
 
     /**
      * If the object has a specified tag.
+     *
      * @param name The tag's name.
      * @return The tag.
      */
-    public boolean hasTag(String name){
+    public boolean hasTag(String name) {
         return value.stream().filter(tag -> tag.getName().equals(name)).collect(Collectors.toList()).size() > 0;
     }
 
@@ -92,7 +95,7 @@ public class ObjectTag implements Tag<List<Tag<?>>> {
         tempDos.writeShort(name.getBytes(StandardCharsets.UTF_8).length);
         tempDos.write(name.getBytes(StandardCharsets.UTF_8));
         // The size of the array.
-        for(Tag<?> tag : this.value){
+        for (Tag<?> tag : this.value) {
             tag.writeData(tempDos);
         }
 
@@ -104,7 +107,7 @@ public class ObjectTag implements Tag<List<Tag<?>>> {
     @Override
     public Tag<List<Tag<?>>> createFromData(ByteBuffer value, int length) {
         List<Tag<?>> data;
-        data = ObjectDataStructure.getListData(value, length);
+        data = InternalUtils.getListData(value, length);
         this.value = data;
         return this;
     }
