@@ -20,7 +20,7 @@ public class TagBuilder {
     private ByteBuffer valueBytes;
     private int valueLength;
 
-    public TagBuilder(){
+    public TagBuilder() {
         this.dataSize = -1;
         this.dataType = -1;
         this.startingIndex = -1;
@@ -29,64 +29,64 @@ public class TagBuilder {
         this.valueLength = -1;
     }
 
-    public void setDataType(int dataType){
+    public void setDataType(int dataType) {
         this.dataType = dataType;
     }
 
-    public int getDataType(){
+    public int getDataType() {
         return dataType;
     }
 
-    public void setDataSize(int size){
+    public void setDataSize(int size) {
         this.dataSize = size;
     }
 
-    public int getDataSize(){
+    public int getDataSize() {
         return dataSize;
     }
 
-    public void setStartingIndex(long startingIndex){
+    public void setStartingIndex(long startingIndex) {
         this.startingIndex = startingIndex;
     }
 
-    public long getStartingIndex(){
+    public long getStartingIndex() {
         return startingIndex;
     }
 
-    public void setName(String s){
-       this.name = s;
+    public void setName(String s) {
+        this.name = s;
     }
 
-    public String getName(){
+    public String getName() {
         return this.name;
     }
 
-    public void setNameSize(int size){
+    public void setNameSize(int size) {
         this.nameSize = size;
     }
 
-    public int getNameSize(){
+    public int getNameSize() {
         return this.nameSize;
     }
 
-    public void setValueBytes(ByteBuffer valueBytes){
+    public void setValueBytes(ByteBuffer valueBytes) {
         this.valueBytes = valueBytes;
     }
 
-    public ByteBuffer getValueBytes(){
+    public ByteBuffer getValueBytes() {
         return this.valueBytes;
     }
 
-    public void setValueLength(int length){
+    public void setValueLength(int length) {
         this.valueLength = length;
     }
 
-    public int getValueLength(){
+    public int getValueLength() {
         return valueLength;
     }
 
-    public Tag<?> process(){
-        switch (getDataType()){
+    public Tag<?> process() {
+        switch (getDataType()) {
             case 1:
                 return new StringTag(this.name, null).createFromData(this.valueBytes, this.valueLength);
             case 2:
@@ -110,22 +110,22 @@ public class TagBuilder {
             case 11:
                 return new ObjectTag(this.name).createFromData(this.valueBytes, this.valueLength);
             default:
-                for(Tag<?> tag : ODS.getCustomTags()){
-                    if(getDataType() != tag.getID()) continue;
+                for (Tag<?> tag : ODS.getCustomTags()) {
+                    if (getDataType() != tag.getID()) continue;
                     Class<?> tagClazz = tag.getClass();
-                    try{
+                    try {
                         return ((Tag<?>) tagClazz.getConstructor(String.class,
-                                (Class<?>) ((ParameterizedType)tagClazz.getGenericInterfaces()[0])
+                                (Class<?>) ((ParameterizedType) tagClazz.getGenericInterfaces()[0])
                                         .getActualTypeArguments()[0]).newInstance(this.name, null))
                                 .createFromData(this.valueBytes, this.valueLength);
-                    }catch(NoSuchMethodException ex){
+                    } catch (NoSuchMethodException ex) {
                         throw new ODSException("Invalid Custom Tag Constructor.");
                     } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
                         throw new ODSException("Unable to create an instance of a custom tag. IllegalAccessException, InstantiationException, " +
                                 "or InvocationTargetException.");
                     }
                 }
-                if(!ODS.ignoreInvalidCustomTags)
+                if (!ODS.ignoreInvalidCustomTags)
                     throw new RuntimeException("Error: That data type does not exist!");
                 else
                     return new InvalidTag(this.name).createFromData(this.valueBytes, this.valueLength);

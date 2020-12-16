@@ -28,6 +28,12 @@ public class ListTag<T extends Tag<?>> implements Tag<List<T>> {
     private String name;
     private List<T> value;
 
+    /**
+     * Construct a List tag.
+     *
+     * @param name  The name of the tag.
+     * @param value The value of the tag.
+     */
     public ListTag(String name, List<T> value) {
         this.name = name;
         this.value = value;

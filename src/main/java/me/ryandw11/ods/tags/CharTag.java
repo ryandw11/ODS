@@ -16,7 +16,13 @@ public class CharTag implements Tag<Character> {
     private String name;
     private Character value;
 
-    public CharTag(String name, char value){
+    /**
+     * Construct a Char tag.
+     *
+     * @param name  The name of the tag.
+     * @param value The value of the tag.
+     */
+    public CharTag(String name, char value) {
         this.name = name;
         this.value = value;
     }

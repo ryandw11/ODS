@@ -20,11 +20,20 @@ public class ObjectTag implements Tag<List<Tag<?>>> {
     private String name;
     private List<Tag<?>> value;
 
+    /**
+     * Construct an object tag with existing tags.
+     * @param name The name of the object.
+     * @param value The list of tags to add.
+     */
     public ObjectTag(String name, List<Tag<?>> value) {
         this.name = name;
         this.value = value;
     }
 
+    /**
+     * Construct an object tag with no existing tags.
+     * @param name The name of the object.
+     */
     public ObjectTag(String name) {
         this.name = name;
         this.value = new ArrayList<>();
@@ -43,14 +52,37 @@ public class ObjectTag implements Tag<List<Tag<?>>> {
      * Get a tag from the object.
      *
      * @param name The name of the tag.
-     * @return The tag. (RuntimeException if no tags were found).
+     * @return The tag. (Returns null if not found).
      */
     public Tag<?> getTag(String name) {
         List<Tag<?>> results = value.stream().filter(tag -> tag.getName().equals(name)).collect(Collectors.toList());
         if (results.size() < 1)
-            throw new RuntimeException("No tag with that name was found!");
+            return null;
 
         return results.get(0);
+    }
+
+    /**
+     * Remove the specified tag from the object.
+     * @param tag The tag to remove.
+     */
+    public void removeTag(Tag<?> tag){
+        value.remove(tag);
+    }
+
+    /**
+     * Remove all tags that have the specified name.
+     * @param name The name to remove.
+     */
+    public void removeTag(String name){
+        value.removeIf(tag -> tag.getName().equals(name));
+    }
+
+    /**
+     * Remove all tags from an object.
+     */
+    public void removeAllTags(){
+        value.clear();
     }
 
     /**

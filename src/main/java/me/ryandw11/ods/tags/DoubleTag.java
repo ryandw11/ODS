@@ -16,7 +16,13 @@ public class DoubleTag implements Tag<Double> {
     private String name;
     private Double value;
 
-    public DoubleTag(String name, double value){
+    /**
+     * Construct a double tag.
+     *
+     * @param name  The name of the tag.
+     * @param value The value of the tag.
+     */
+    public DoubleTag(String name, double value) {
         this.name = name;
         this.value = value;
     }

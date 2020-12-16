@@ -16,7 +16,13 @@ public class ShortTag implements Tag<Short> {
     private String name;
     private Short value;
 
-    public ShortTag(String name, short value){
+    /**
+     * Construct a short tag.
+     *
+     * @param name  The name of the tag.
+     * @param value The value of the tag.
+     */
+    public ShortTag(String name, short value) {
         this.name = name;
         this.value = value;
     }

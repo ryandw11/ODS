@@ -16,7 +16,13 @@ public class FloatTag implements Tag<Float> {
     private String name;
     private Float value;
 
-    public FloatTag(String name, float value){
+    /**
+     * Construct a float tag.
+     *
+     * @param name  The name of the tag.
+     * @param value The value of the tag.
+     */
+    public FloatTag(String name, float value) {
         this.name = name;
         this.value = value;
     }

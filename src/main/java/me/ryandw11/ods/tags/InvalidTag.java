@@ -17,7 +17,7 @@ public class InvalidTag implements Tag<byte[]> {
     private byte[] value;
 
     /**
-     * Please read the class description.
+     * Construct an invalid tag.
      *
      * @param name The name.
      * @deprecated Do not use this constructor.

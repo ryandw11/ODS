@@ -1,6 +1,8 @@
 package me.ryandw11.ods.compression;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * This interface allows different compression algorithms to be used.

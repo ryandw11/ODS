@@ -105,7 +105,7 @@ public class ObjectDataStructure {
     }
 
     /**
-     * Get all of the tags in the file.
+     * Get all of the tags in the file/buffer.
      *
      * @return All of the tags.
      * <p>This will return null if there are no tags, or if the file does not exist.</p>
@@ -115,7 +115,7 @@ public class ObjectDataStructure {
     }
 
     /**
-     * Save tags to the file.
+     * Save tags to the file/buffer.
      * <p>This will overwrite the existing data. To append tags see {@link #append(Tag)} and {@link #appendAll(List)}</p>
      *
      * @param tags The list of tags to save.
