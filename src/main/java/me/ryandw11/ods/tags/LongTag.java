@@ -16,7 +16,13 @@ public class LongTag implements Tag<Long> {
     private String name;
     private Long value;
 
-    public LongTag(String name, long value){
+    /**
+     * Construct a long tag.
+     *
+     * @param name  The name of the tag.
+     * @param value The value of the tag.
+     */
+    public LongTag(String name, long value) {
         this.name = name;
         this.value = value;
     }

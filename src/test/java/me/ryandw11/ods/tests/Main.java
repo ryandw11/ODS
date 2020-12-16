@@ -9,7 +9,7 @@ import java.util.*;
 
 public class Main {
     public static void main(String[] args){
-        ObjectDataStructure ods = new ObjectDataStructure(new File("test.ods"), new GZIPCompression());
+        ObjectDataStructure ods = new ObjectDataStructure(/*new File("test.ods"), new GZIPCompression()*/);
         // Register a custom tag.
         ODS.registerCustomTag(new CustomTag("", ""));
 
@@ -65,7 +65,7 @@ public class Main {
 
         StringTag ownerFirstName = ods.get("Car.Owner.firstName");
         StringTag ownerLastName = ods.get("Car.Owner.lastName");
-        System.out.println("The owner of the car is " + ODS.unwrap(ownerFirstName) + " " + ODS.unwrap(ownerLastName));
+        System.out.println("The owner of the car is " + ownerFirstName.getValue() + " " + ownerLastName.getValue());
 
         Car unserCar = ODS.deserialize(ods.get("SerCar"), Car.class);
 

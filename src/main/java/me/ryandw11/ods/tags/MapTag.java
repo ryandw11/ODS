@@ -1,24 +1,34 @@
 package me.ryandw11.ods.tags;
 
-import me.ryandw11.ods.ObjectDataStructure;
 import me.ryandw11.ods.Tag;
+import me.ryandw11.ods.internal.InternalUtils;
 import me.ryandw11.ods.io.CountingOutputStream;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 /**
- * The map tag.
+ * The map tag. It is assumed that the key of the map is a String.
+ *
  * @param <T> The tag to have in a map.
  */
 public class MapTag<T extends Tag<?>> implements Tag<Map<String, T>> {
     private String name;
     private Map<String, T> value;
 
-    public MapTag(String name, Map<String, T> value){
+    /**
+     * Construct a map tag from a map.
+     *
+     * @param name  The name of the tag.
+     * @param value The map to construct from.
+     */
+    public MapTag(String name, Map<String, T> value) {
         this.name = name;
         this.value = value;
     }
@@ -55,7 +65,7 @@ public class MapTag<T extends Tag<?>> implements Tag<Map<String, T>> {
         tempDos.writeShort(name.getBytes(StandardCharsets.UTF_8).length);
         tempDos.write(name.getBytes(StandardCharsets.UTF_8));
         // The size of the array.
-        for(Map.Entry<String, T> entry : this.value.entrySet()){
+        for (Map.Entry<String, T> entry : this.value.entrySet()) {
             entry.getValue().setName(entry.getKey());
             entry.getValue().writeData(tempDos);
 
@@ -69,9 +79,9 @@ public class MapTag<T extends Tag<?>> implements Tag<Map<String, T>> {
     @Override
     public Tag<Map<String, T>> createFromData(ByteBuffer value, int length) {
         List<Tag<?>> data;
-        data = ObjectDataStructure.getListData(value, length);
+        data = InternalUtils.getListData(value, length);
         Map<String, T> output = new HashMap<>();
-        for(Tag<?> tag : data){
+        for (Tag<?> tag : data) {
             output.put(tag.getName(), (T) tag);
             tag.setName("");
         }

@@ -15,7 +15,8 @@ import java.util.List;
  */
 public class ODS {
 
-    private ODS() {}
+    private ODS() {
+    }
 
     protected static boolean ignoreInvalidCustomTags = false;
     /**

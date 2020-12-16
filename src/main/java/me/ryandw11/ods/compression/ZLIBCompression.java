@@ -12,12 +12,12 @@ import java.util.zip.InflaterInputStream;
  */
 public class ZLIBCompression implements Compressor {
     @Override
-    public InputStream getInputStream(FileInputStream file) {
+    public InputStream getInputStream(InputStream file) {
         return new InflaterInputStream(file);
     }
 
     @Override
-    public OutputStream getOutputStream(FileOutputStream file) {
+    public OutputStream getOutputStream(OutputStream file) {
         return new DeflaterOutputStream(file);
     }
 }

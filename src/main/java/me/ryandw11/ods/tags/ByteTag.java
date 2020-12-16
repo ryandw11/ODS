@@ -16,7 +16,13 @@ public class ByteTag implements Tag<Byte> {
     private String name;
     private Byte value;
 
-    public ByteTag(String name, byte value){
+    /**
+     * Construct a Byte tag.
+     *
+     * @param name  The name of the tag.
+     * @param value The value of the tag.
+     */
+    public ByteTag(String name, byte value) {
         this.name = name;
         this.value = value;
     }

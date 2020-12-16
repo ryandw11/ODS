@@ -3,7 +3,9 @@ package me.ryandw11.ods.tags;
 import me.ryandw11.ods.Tag;
 import me.ryandw11.ods.io.CountingOutputStream;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
@@ -14,7 +16,13 @@ public class IntTag implements Tag<Integer> {
     private int value;
     private String name;
 
-    public IntTag(String name, int value){
+    /**
+     * Construct an integer tag.
+     *
+     * @param name  The name of the tag.
+     * @param value The value of the tag.
+     */
+    public IntTag(String name, int value) {
         this.name = name;
         this.value = value;
     }

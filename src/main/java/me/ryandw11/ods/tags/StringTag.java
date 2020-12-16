@@ -16,6 +16,12 @@ public class StringTag implements Tag<String> {
     private String value;
     private String name;
 
+    /**
+     * Construct a String tag.
+     *
+     * @param name  The name of the tag.
+     * @param value The value of the tag.
+     */
     public StringTag(String name, String value) {
         this.name = name;
         this.value = value;

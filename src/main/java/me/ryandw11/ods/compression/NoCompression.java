@@ -12,12 +12,12 @@ import java.util.zip.InflaterInputStream;
  */
 public class NoCompression implements Compressor {
     @Override
-    public InputStream getInputStream(FileInputStream file) {
+    public InputStream getInputStream(InputStream file) {
         return file;
     }
 
     @Override
-    public OutputStream getOutputStream(FileOutputStream file) {
+    public OutputStream getOutputStream(OutputStream file) {
         return file;
     }
 }
