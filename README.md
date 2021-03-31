@@ -20,7 +20,7 @@ Maven:
 <dependency>
     <groupId>me.ryandw11</groupId>
     <artifactId>ods</artifactId>
-    <version>1.0.3</version>
+    <version>1.0.5</version>
 </dependency>
 ```
 Gradle:  
@@ -30,7 +30,7 @@ repositories {
 }
     
 dependencies {
-    implementation 'me.ryandw11:ods:1.0.3'
+    implementation 'me.ryandw11:ods:1.0.5'
 }
 ```
 Fat Jar:  
@@ -132,6 +132,7 @@ Each tag has a key. There can only be one tag with a ceratin key.
 <tr><td>9</td><td>List</td></tr>
 <tr><td>10</td><td>Map</td></tr>
 <tr><td>11</td><td>Object</td></tr>
+<tr><td>12</td><td>Compressed Object</td></tr>
 </table>
 </html>
 

@@ -262,13 +262,25 @@ public class ODS {
         ODS.compressorMap.put(name, compressor);
     }
 
+    /**
+     * Get the compressor registered with a name.
+     *
+     * @param name The name of the compressor.
+     * @return The retrieved compressor. (Null if not found.)
+     */
     public static Compressor getCompressor(String name) {
         return compressorMap.get(name);
     }
 
-    public static String getCompressorName(Compressor compressor){
-        for(Map.Entry<String, Compressor> entry : compressorMap.entrySet()){
-            if(entry.getValue().getClass() == compressor.getClass())
+    /**
+     * Get the name of a compressor.
+     *
+     * @param compressor The compressor.
+     * @return The retrieved name of the compressor. (Null if not found.)
+     */
+    public static String getCompressorName(Compressor compressor) {
+        for (Map.Entry<String, Compressor> entry : compressorMap.entrySet()) {
+            if (entry.getValue().getClass() == compressor.getClass())
                 return entry.getKey();
         }
         return null;
