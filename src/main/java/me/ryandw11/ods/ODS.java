@@ -1,12 +1,17 @@
 package me.ryandw11.ods;
 
+import me.ryandw11.ods.compression.Compressor;
+import me.ryandw11.ods.compression.GZIPCompression;
+import me.ryandw11.ods.compression.ZLIBCompression;
 import me.ryandw11.ods.exception.ODSException;
 import me.ryandw11.ods.serializer.Serializable;
 import me.ryandw11.ods.tags.*;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This is a utility class that provided wrappers for the different tags.
@@ -22,7 +27,15 @@ public class ODS {
     /**
      * This list stores all registered custom tags.
      */
-    private static List<Tag<?>> customTags = new ArrayList<>();
+    private static final List<Tag<?>> customTags = new ArrayList<>();
+
+    private static final Map<String, Compressor> compressorMap = new HashMap<>();
+
+    static {
+        // Add the built-in compression formats.
+        compressorMap.put("GZIP", new GZIPCompression());
+        compressorMap.put("ZLIB", new ZLIBCompression());
+    }
 
     /**
      * Wrap an object to a tag.
@@ -234,6 +247,31 @@ public class ODS {
         if (tag.getID() > -1 && tag.getID() < 15)
             throw new ODSException("Invalid Tag ID. ID cannot be 0 - 15");
         ODS.customTags.add(tag);
+    }
+
+    /**
+     * Add a custom compression type by name.
+     * <p>This exists so objects that rely on compression, like the {@link CompressedObjectTag}, are able
+     * to be cross language. So if you have a ZSTD compressed object made in C# you can still read it in Java by registering
+     * a Compressor with the same name.</p>
+     *
+     * @param name       The name.
+     * @param compressor The compressor.
+     */
+    public static void registerCompression(String name, Compressor compressor) {
+        ODS.compressorMap.put(name, compressor);
+    }
+
+    public static Compressor getCompressor(String name) {
+        return compressorMap.get(name);
+    }
+
+    public static String getCompressorName(Compressor compressor){
+        for(Map.Entry<String, Compressor> entry : compressorMap.entrySet()){
+            if(entry.getValue().getClass() == compressor.getClass())
+                return entry.getKey();
+        }
+        return null;
     }
 
     /**

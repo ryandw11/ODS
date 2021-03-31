@@ -109,6 +109,8 @@ public class TagBuilder {
                 return new MapTag<>(this.name, null).createFromData(this.valueBytes, this.valueLength);
             case 11:
                 return new ObjectTag(this.name).createFromData(this.valueBytes, this.valueLength);
+            case 12:
+                return new CompressedObjectTag(this.name).createFromData(this.valueBytes, this.valueLength);
             default:
                 for (Tag<?> tag : ODS.getCustomTags()) {
                     if (getDataType() != tag.getID()) continue;
