@@ -84,7 +84,7 @@ public class ODSMem implements ODSInternal {
      * @return The object Tag.
      * <p>This will return null if the requested sub-object does not exist.</p>
      */
-    public <T> T get(String key) {
+    public <T extends Tag<?>> T get(String key) {
         try {
             memBuffer.position(0);
             if (memBuffer.limit() == 1)

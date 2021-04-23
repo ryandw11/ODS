@@ -100,7 +100,7 @@ public class ObjectDataStructure {
      * @return The object Tag.
      * <p>This will return null if the requested sub-object does not exist, or if the file does not exist.</p>
      */
-    public <T> T get(String key) {
+    public <T extends Tag<?>> T get(String key) {
         return internal.get(key);
     }
 

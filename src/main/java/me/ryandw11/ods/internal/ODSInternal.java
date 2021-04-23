@@ -12,7 +12,7 @@ import java.util.List;
  * You can also view the main explanations at {@link me.ryandw11.ods.ObjectDataStructure}.
  */
 public interface ODSInternal {
-    <T> T get(String key);
+    <T extends Tag<?>> T get(String key);
 
     List<Tag<?>> getAll();
 

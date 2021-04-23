@@ -91,7 +91,7 @@ public class ODSFile implements ODSInternal {
      * @return The object Tag.
      * <p>This will return null if the requested sub-object does not exist, or if the file does not exist.</p>
      */
-    public <T> T get(String key) {
+    public <T extends Tag<?>> T get(String key) {
         try {
             if (!file.exists()) return null;
             InputStream is = getInputStream();
