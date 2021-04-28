@@ -3,6 +3,7 @@ package me.ryandw11.ods.internal;
 import me.ryandw11.ods.Tag;
 import me.ryandw11.ods.compression.Compressor;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -31,4 +32,10 @@ public interface ODSInternal {
     void set(String key, Tag<?> value);
 
     byte[] export(Compressor compressor);
+
+    void importFile(File file, Compressor compressor);
+
+    void saveToFile(File file, Compressor compressor);
+
+    void clear();
 }

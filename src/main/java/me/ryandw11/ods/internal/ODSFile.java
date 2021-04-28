@@ -24,8 +24,8 @@ import java.util.zip.InflaterOutputStream;
  * The internal code for using a file.
  */
 public class ODSFile implements ODSInternal {
-    private File file;
-    private Compressor compression;
+    private final File file;
+    private final Compressor compression;
 
     /**
      * The file to be saved to
@@ -72,9 +72,10 @@ public class ODSFile implements ODSInternal {
                 streamed using channels saving memory.
         */
         if (stream instanceof FileInputStream) {
-            FileInputStream fis = (FileInputStream) stream;
-            FileChannel channel = fis.getChannel();
-            return channel.map(FileChannel.MapMode.READ_ONLY, 0, channel.size());
+            try (FileInputStream fis = (FileInputStream) stream) {
+                FileChannel channel = fis.getChannel();
+                return channel.map(FileChannel.MapMode.READ_ONLY, 0, channel.size());
+            }
         } else
             return ByteBuffer.wrap(ODSIOUtils.toByteArray(stream));
     }
@@ -412,6 +413,63 @@ public class ODSFile implements ODSInternal {
             return output;
         } catch (IOException ex) {
             throw new ODSException("Unable to export data from file.", ex);
+        }
+    }
+
+    /**
+     * Import a file into this file.
+     * <p>This basically copies one file to another.</p>
+     * <p>This <b>will</b> overwrite the current file.</p>
+     *
+     * @param file       The file to copy from.
+     * @param compressor The compression of the other file.
+     */
+    @Override
+    public void importFile(File file, Compressor compressor) {
+        try (InputStream is = compressor.getInputStream(new FileInputStream(file))) {
+            byte[] data = ODSIOUtils.toByteArray(is);
+            try (OutputStream fos = this.compression.getOutputStream(new FileOutputStream(this.file))) {
+                fos.write(data);
+            } catch (IOException ex) {
+                throw new ODSException("Unable to export bytes to file.", ex);
+            }
+        } catch (IOException ex) {
+            throw new ODSException("Unable to import bytes from files.", ex);
+        }
+    }
+
+    /**
+     * Export to another file.
+     * <p>This basically copies the current file into another one.</p>
+     *
+     * @param file       The other file to copy to.
+     * @param compressor The desired compression of the copy file.
+     */
+    @Override
+    public void saveToFile(File file, Compressor compressor) {
+        try (InputStream is = this.compression.getInputStream(new FileInputStream(this.file))) {
+            byte[] data = ODSIOUtils.toByteArray(is);
+            try (OutputStream fos = compressor.getOutputStream(new FileOutputStream(file))) {
+                fos.write(data);
+            } catch (IOException ex) {
+                throw new ODSException("Unable to export bytes to file.", ex);
+            }
+        } catch (IOException ex) {
+            throw new ODSException("Unable to import bytes from files.", ex);
+        }
+    }
+
+    /**
+     * Clears all the data from a file.
+     * <p>This works internally by overwriting a file.</p>
+     */
+    @Override
+    public void clear() {
+        try {
+            if (!this.file.createNewFile())
+                throw new ODSException("Unable to clear file. Does the file have the correct permission?");
+        } catch (IOException ex) {
+            throw new ODSException("IO error occurred when clearing the file.", ex);
         }
     }
 
