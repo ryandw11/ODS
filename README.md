@@ -2,6 +2,8 @@
 # Object Data Structure (ODS)
 Object Data Structure is a file format inspired by NBT. Everything in this file format is made of tags.  
 ODS is not human-readable, data is stored in bytes.  
+  
+Requires Java 8+
 
 [Support Discord](https://discord.gg/xzy4mZZ)
   
