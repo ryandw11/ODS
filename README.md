@@ -132,6 +132,7 @@ Each tag has a key. There can only be one tag with a ceratin key.
 <tr><td>9</td><td>List</td></tr>
 <tr><td>10</td><td>Map</td></tr>
 <tr><td>11</td><td>Object</td></tr>
+<tr><td>12</td><td>Compressed Object</td></tr>
 </table>
 </html>
 
