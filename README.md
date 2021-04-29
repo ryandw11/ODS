@@ -1,7 +1,7 @@
 ![Maven Release](https://www.ryandw11.com/api/repo-badge/maven-releases/me.ryandw11/ods) ![Maven Snapshot](https://www.ryandw11.com/api/repo-badge-snapshot/maven-snapshots/me.ryandw11/ods)
 # Object Data Structure (ODS)
 Object Data Structure is a file format inspired by NBT. Everything in this file format is made of tags.  
-ODS is not human readable, data is stored in bytes.  
+ODS is not human-readable, data is stored in bytes.  
 
 [Support Discord](https://discord.gg/xzy4mZZ)
   
@@ -20,7 +20,7 @@ Maven:
 <dependency>
     <groupId>me.ryandw11</groupId>
     <artifactId>ods</artifactId>
-    <version>1.0.4</version>
+    <version>1.0.5</version>
 </dependency>
 ```
 Gradle:  
@@ -30,7 +30,7 @@ repositories {
 }
     
 dependencies {
-    implementation 'me.ryandw11:ods:1.0.4'
+    implementation 'me.ryandw11:ods:1.0.5'
 }
 ```
 Fat Jar:  
@@ -120,7 +120,7 @@ Each tag has a key. There can only be one tag with a ceratin key.
 <html>
 <table>
 <tr><th>Byte</th><th>Type</th></tr>
-<tr><td>0</th><td>Reserved</td></tr>
+<tr><td>0</td><td>Reserved</td></tr>
 <tr><td>1</td><td>String</td></tr>
 <tr><td>2</td><td>int</td></tr>
 <tr><td>3</td><td>Float</td></tr>
@@ -132,6 +132,7 @@ Each tag has a key. There can only be one tag with a ceratin key.
 <tr><td>9</td><td>List</td></tr>
 <tr><td>10</td><td>Map</td></tr>
 <tr><td>11</td><td>Object</td></tr>
+<tr><td>12</td><td>Compressed Object</td></tr>
 </table>
 </html>
 

@@ -2,6 +2,8 @@ package me.ryandw11.ods.internal;
 
 import me.ryandw11.ods.Tag;
 import me.ryandw11.ods.TagBuilder;
+import me.ryandw11.ods.exception.CompressedObjectException;
+import me.ryandw11.ods.exception.ODSException;
 import me.ryandw11.ods.util.KeyScout;
 import me.ryandw11.ods.util.KeyScoutChild;
 
@@ -56,8 +58,10 @@ public class InternalUtils {
 
             currentBuilder.setValueLength(((int) currentBuilder.getStartingIndex() - data.position()) + currentBuilder.getDataSize());
             currentBuilder.setValueBytes(data);
-            if (otherKey != null)
+            if (otherKey != null) {
+                validateNotCompressed(currentBuilder);
                 return getSubObjectData(data, otherKey);
+            }
             return currentBuilder.process();
         }
         return null;
@@ -101,8 +105,10 @@ public class InternalUtils {
 
             currentBuilder.setValueLength(((int) currentBuilder.getStartingIndex() - data.position()) + currentBuilder.getDataSize());
             currentBuilder.setValueBytes(data);
-            if (otherKey != null)
+            if (otherKey != null) {
+                validateNotCompressed(currentBuilder);
                 return findSubObjectData(data, otherKey);
+            }
             return true;
         }
         return false;
@@ -266,6 +272,9 @@ public class InternalUtils {
             }
             currentBuilder.setValueBytes(data);
             if (otherKey != null) {
+                // Check if the object is compressed
+                validateNotCompressed(currentBuilder);
+
                 child.setSize(currentBuilder.getDataSize());
                 child.setName(currentBuilder.getName());
                 counter.addChild(child);
@@ -307,5 +316,15 @@ public class InternalUtils {
             output.add(currentBuilder.process());
         }
         return output;
+    }
+
+    /**
+     * Validate if an object is compressed by throwing an exception if it is.
+     *
+     * @param builder The builder to check.
+     */
+    private static void validateNotCompressed(TagBuilder builder){
+        if(builder.getDataType() == 12)
+            throw new CompressedObjectException("Unable to traverse a Compressed Object. Consider decompressing the object '" + builder.getName() + "' first.");
     }
 }

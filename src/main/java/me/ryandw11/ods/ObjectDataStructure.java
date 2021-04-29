@@ -33,10 +33,10 @@ import java.util.List;
  * <p>
  * For exact information on the methods depending on storage type (viz. File or Memory) please visit the respective internal classes.
  *
- * @version NewLayout-SNAPSHOT
+ * @version 1.0.5
  */
 public class ObjectDataStructure {
-    private ODSInternal internal;
+    private final ODSInternal internal;
 
     /**
      * Create ODS using the file storage type. Data will be written to and read from a file.
@@ -100,7 +100,7 @@ public class ObjectDataStructure {
      * @return The object Tag.
      * <p>This will return null if the requested sub-object does not exist, or if the file does not exist.</p>
      */
-    public <T> T get(String key) {
+    public <T extends Tag<?>> T get(String key) {
         return internal.get(key);
     }
 
@@ -205,6 +205,37 @@ public class ObjectDataStructure {
      */
     public byte[] export(Compressor compressor) {
         return internal.export(compressor);
+    }
+
+    /**
+     * Import the data from an ODS file.
+     * <p>See {@link ODSMem#importFile(File, Compressor)} and {@link ODSFile#importFile(File, Compressor)}
+     * for the specifics.</p>
+     *
+     * @param file       The file to import from.
+     * @param compressor The compressor.
+     */
+    public void importFile(File file, Compressor compressor) {
+        internal.importFile(file, compressor);
+    }
+
+    /**
+     * Save the data to a file.
+     * <p>See {@link ODSMem#saveToFile(File, Compressor)} and {@link ODSFile#saveToFile(File, Compressor)} for
+     * the specifics.</p>
+     *
+     * @param file       The file.
+     * @param compressor The Compressor.
+     */
+    public void saveToFile(File file, Compressor compressor) {
+        internal.saveToFile(file, compressor);
+    }
+
+    /**
+     * Clear all data from the file / memory.
+     */
+    public void clear() {
+        internal.clear();
     }
 
 }

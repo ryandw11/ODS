@@ -25,4 +25,10 @@ public class ODSException extends RuntimeException {
     public IOException getIOException() {
         return ex;
     }
+
+    @Override
+    public void printStackTrace() {
+        super.printStackTrace();
+        ex.printStackTrace();
+    }
 }

@@ -2,6 +2,7 @@ package me.ryandw11.ods.tests;
 
 import me.ryandw11.ods.*;
 import me.ryandw11.ods.compression.GZIPCompression;
+import me.ryandw11.ods.compression.NoCompression;
 import me.ryandw11.ods.tags.*;
 
 import java.io.File;
@@ -9,7 +10,7 @@ import java.util.*;
 
 public class Main {
     public static void main(String[] args){
-        ObjectDataStructure ods = new ObjectDataStructure(/*new File("test.ods"), new GZIPCompression()*/);
+        ObjectDataStructure ods = new ObjectDataStructure(new File("test.ods"), new GZIPCompression());
         // Register a custom tag.
         ODS.registerCustomTag(new CustomTag("", ""));
 
@@ -32,6 +33,13 @@ public class Main {
 
         tags.add(car);
 
+        CompressedObjectTag compressedObjectTag = new CompressedObjectTag("TestCompressedObject");
+        compressedObjectTag.addTag(ODS.wrap("TestObject", "This is a test!"));
+        compressedObjectTag.addTag(ODS.wrap("Number", 15));
+        compressedObjectTag.addTag(ODS.wrap("Decimal", 34.5));
+
+        tags.add(compressedObjectTag);
+
         tags.add(new CustomTag("Test", "This is a test!"));
 
         Random rand = new Random();
@@ -52,7 +60,7 @@ public class Main {
 
         //ods.replaceData("Car.Owner.Age", new StringTag("Age", "This is not an int?"));
 
-        System.out.println(ods.find("Car.Owner.Age"));
+//        System.out.println(ods.find("Car.Owner.Age"));
 
         // ===================================
         // Loading Objects
@@ -74,13 +82,15 @@ public class Main {
         System.out.println(System.currentTimeMillis() - time + "ms");
         System.out.println(ods.find("SerCar"));
 
-        ods.set("Car.Owner.MEGAOOF.MULTIPLEFILES.test", new StringTag("Test", "test"));
-        ods.set("Car.Owner.MEGAOOF.MULTIPLEFILES.test2", new StringTag("Test2", "Second Test"));
+//        ods.set("Car.Owner.MEGAOOF.MULTIPLEFILES.test", new StringTag("Test", "test"));
+//        ods.set("Car.Owner.MEGAOOF.MULTIPLEFILES.test2", new StringTag("Test2", "Second Test"));
 
         ods.append(new StringTag("Test", "test"));
 
         // Print out a custom tag.
         System.out.println("Custom Tag: " + ods.<CustomTag>get("Test").getValue());
+
+        ods.saveToFile(new File("new_file.ods"), new GZIPCompression());
 
     }
 

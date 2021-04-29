@@ -84,7 +84,7 @@ public class ODSMem implements ODSInternal {
      * @return The object Tag.
      * <p>This will return null if the requested sub-object does not exist.</p>
      */
-    public <T> T get(String key) {
+    public <T extends Tag<?>> T get(String key) {
         try {
             memBuffer.position(0);
             if (memBuffer.limit() == 1)
@@ -354,6 +354,12 @@ public class ODSMem implements ODSInternal {
         }
     }
 
+    /**
+     * Get the array of bytes from the buffer.
+     *
+     * @param compressor The compression you want to use for the bytes.
+     * @return The bytes.
+     */
     @Override
     public byte[] export(Compressor compressor) {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -366,5 +372,44 @@ public class ODSMem implements ODSInternal {
         } catch (IOException ex) {
             throw new ODSException("Unable to export bytes from memory.", ex);
         }
+    }
+
+    /**
+     * Import a data from an ODS file into the buffer.
+     *
+     * @param file       The file to import from.
+     * @param compressor The compression of that file.
+     */
+    @Override
+    public void importFile(File file, Compressor compressor) {
+        try (InputStream is = compressor.getInputStream(new FileInputStream(file))) {
+            byte[] data = ODSIOUtils.toByteArray(is);
+            this.memBuffer = ByteBuffer.wrap(data);
+        } catch (IOException ex) {
+            throw new ODSException("Unable to import bytes from files.", ex);
+        }
+    }
+
+    /**
+     * Save data from the buffer into a file.
+     *
+     * @param file       The file to save to.
+     * @param compressor The compression to use for that file.
+     */
+    @Override
+    public void saveToFile(File file, Compressor compressor) {
+        try (OutputStream fos = compressor.getOutputStream(new FileOutputStream(file))) {
+            fos.write(this.memBuffer.array());
+        } catch (IOException ex) {
+            throw new ODSException("Unable to export bytes to file.", ex);
+        }
+    }
+
+    /**
+     * Clear the buffer.
+     */
+    @Override
+    public void clear() {
+        this.memBuffer.clear();
     }
 }
