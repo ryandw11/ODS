@@ -36,7 +36,7 @@ dependencies {
 }
 ```
 Fat Jar:  
-[Download the latest fat jar here](https://github.com/ryandw11/ODS/releases)
+[You can get the fat jar from releases](https://github.com/ryandw11/ODS/releases) or get automatic builds from [ci.ryandw11.com](https://ci.ryandw11.com/job/object-data-structure/).
 # Usage
 As stated above ODS uses tags. There are many primative tags: StringTag, IntTag, ShortTag, LongTag, ByteTag, DoubleTag, FloatTag.  
 There are also the ListTag and MapTag. They both store primative tags in a list and map format respectivly.  
